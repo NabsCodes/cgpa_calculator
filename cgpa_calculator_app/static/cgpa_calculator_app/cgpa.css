@@ -1,0 +1,245 @@
+.container.mt-5 {
+  background-color: #ece9e9;
+  width: 80%;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #343a40;
+}
+
+h1 {
+  font-weight: bold;
+  color: #343a40;
+}
+
+.scale, .standing {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #343a40;
+}
+
+.table {
+  width: 80%;
+  margin: 0 auto;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.table thead th {
+  font-weight: bold;
+  background-color: #343a40;
+  color: #fff;
+}
+
+.table tbody tr td {
+  vertical-align: middle;
+}
+
+.table td:nth-child(4) {
+  text-align: center;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+input:hover,
+select:hover {
+  background-color: #ffffff;
+  border-color: #406487;
+}
+
+input:focus:hover,
+select:focus:hover {
+  background-color: #ffffff;
+  border-color: #406487;
+}
+
+#addRowBtn, #resetBtn {
+  display: block;
+  width: 150px;
+  margin: 16px auto;
+}
+
+.custom-button {
+  background-color: #406487;
+  color: #fff;
+  border: none;
+}
+
+.custom-button:hover {
+  background-color: #3177c1;
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+  transition: 2s;
+}
+
+.row {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.row > div {
+  padding: 10px;
+  background-color: #f1f1f1;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+}
+
+.row > div:not(:last-child) {
+  border-right: none;
+}
+
+.progress-container {
+  width: 80%;
+  height: 30px;
+  background-color: #f3f3f3;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  }
+  
+.progress-bar {
+  height: 100%;
+  width: 0;
+  position: absolute;
+  transition: width 1s;
+  background-image: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 40px 40px;
+  animation: progress-bar-stripes 2s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+  from {
+    background-position: 40px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+.progress-label {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 5px;
+  }
+  
+  .presidents-list {
+  background-color: #00b300;
+  }
+  
+  .deans-list {
+  background-color: #33a1cc;
+  }
+  
+  .good-standing {
+  background-color: #ffcc66;
+  }
+  
+  .not-good-standing {
+  background-color: #ff4d4d;
+  }
+
+footer {
+  padding: 20px 0;
+  background-color: #343a40;
+  color: #fff;
+}
+
+footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+input[type="number"], input[type="text"], select {
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+input[type="number"]:focus, input[type="text"]:focus, select:focus {
+  outline: none;
+  border-color: #DC143C;
+  border: 1px solid ;
+}
+
+.deleteRowBtn {
+  color: #dc3545;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.deleteRowBtn:hover {
+  color: #dc3545;
+}
+
+.deleteRowBtn:focus {
+  outline: none;
+}
+
+i.fa-trash {
+  font-size: 1.2rem;
+}
+
+i.fa-sync-alt {
+  margin-right: 5px;
+}
+
+@keyframes rotating {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#resetIcon:hover {
+  animation: rotating 1s linear infinite;
+}
+
+.progress-label {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #343a40;
+}
+
+#github-link {
+  color: #fff;
+  font-size: 1.5rem;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+#github-link:hover {
+  color: #ccc;
+}

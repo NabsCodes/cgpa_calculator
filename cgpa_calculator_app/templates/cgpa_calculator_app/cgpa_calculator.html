@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CGPA Calculator</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'cgpa_calculator_app/cgpa.css' %}" />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="text-center mb-4">CGPA CALCULATOR</h1>
+      <p class="text-center"><span class="scale">GRADE SCALE: 4.00</span></p>
+      <p class="text-center">Enter the details of your courses below:</p>
+      <table class="table table-bordered table-striped" id="courseTable">
+        <tbody>
+          <tr>
+            <th>Current CGPA</th>
+            <td colspan="3">
+              <input
+                type="number"
+                id="currentCGPA"
+                step="0.01"
+                min="0"
+                max="4"
+                placeholder="Eg: 3.5"
+                onchange="calculateCGPA()"
+              />
+            </td>
+          </tr>
+          <tr>
+            <th>Credits Earned</th>
+            <td colspan="3">
+              <input
+                type="number"
+                id="creditsEarned"
+                min="0"
+                placeholder="Eg: 30"
+                onchange="calculateCGPA()"
+              />
+            </td>
+          </tr>
+
+          <tr>
+            <th>Course Code</th>
+            <th>Credit Hours</th>
+            <th>Grade</th>
+            <th></th>
+          </tr>
+          <tr class="courseRow">
+            <td>
+              <input
+                type="text"
+                class="courseCode"
+                size="10"
+                placeholder="Eg: AUN 101"
+              />
+            </td>
+            <td>
+              <select class="creditHours" onchange="calculateCGPA()">
+                <option value="" disabled selected>--</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="1">1</option>
+                <option value="0">0</option>
+              </select>
+            </td>
+            <td>
+              <select class="grade" onchange="calculateCGPA()">
+                <option value="" disabled selected>--</option>
+                <option value="A">A</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B">B</option>
+                <option value="B-">B-</option>
+                <option value="C+">C+</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="F">F</option>
+                <option value="W">W</option>
+                <option value="WP">WP</option>
+                <option value="WF">WF</option>
+              </select>
+            </td>
+            <td>
+              <button class="deleteRowBtn" onclick="deleteRow(this)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <button class="btn btn-block custom-button" id="addRowBtn" onclick="addRow()">
+        Add Course
+      </button>
+
+      <div class="row mt-4">
+        <div class="col-md-4 text-center">
+          <strong>Total Credits:</strong>
+          <span id="totalCredits"></span>
+        </div>
+        <div class="col-md-4 text-center">
+          <strong>GPA:</strong>
+          <span id="gpa"></span>
+        </div>
+        <div class="col-md-4 text-center">
+          <strong>CGPA:</strong>
+          <span id="cgpa"></span>
+        </div>
+      </div>
+      <br />
+
+      <p class="text-center"><span class="standing">Academic Standing:</span></p>
+   
+      <div class="progress-wrapper">
+        <div class="progress-container">
+          <div class="progress-bar" role="progressbar" id="progressBar"></div>
+        </div>
+      </div>
+      <p class="text-center progress-label mt-2" id="progressLabel"></p>
+
+      <button class="btn btn-block custom-button mt-4" id="resetBtn" onclick="resetForm()">
+        <i class="fas fa-sync-alt" id="resetIcon"></i> Reset
+      </button>
+           
+      
+    </div>
+    
+    <footer class="text-center mt-5">
+      <p id="copyright">
+        &copy; Developed by
+        <a href="mailto:hassanhauda@gmail.com">Hassan Umar</a>. All rights
+        reserved.
+      </p>
+      <a href="https://github.com/NabsCodes" target="_blank" id="github-link">
+        <i class="fab fa-github"></i>
+      </a>
+    </footer>
+    
+    <script src="{% static 'cgpa_calculator_app/cgpa.js' %}"></script>
+  </body>
+</html>
