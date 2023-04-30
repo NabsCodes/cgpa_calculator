@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Emblema One
+- Font Author: Copyright (c) 2011 by Sorkin Type Co with Reserved Font Names "Emblema" and "Emblema One"
+- Font Source: http://fonts.gstatic.com/s/emblemaone/v21/nKKT-GQ0F5dSY8vzG0rOEIRBHl57G_f_.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))
