@@ -20,5 +20,3 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('cgpa_calculator_app.urls')),
 ]
-
-
