@@ -47,7 +47,10 @@ function initializeTable() {
   }
 }
 
-initializeTable();
+document.addEventListener("DOMContentLoaded", function () {
+  initializeTable();
+});
+
 
 function deleteRow(btn) {
   var row = btn.parentNode.parentNode;
@@ -115,6 +118,7 @@ function calculateCGPA() {
       const gradePoints = getGradePoints(grade);
 
       if (gradePoints > 4.0) {
+        // Invalid input: Do not update the display
         return;
       }
 
@@ -231,13 +235,26 @@ function resetForm() {
   }
 }
 
+
 function initializeValues() {
   document.getElementById('totalCredits').textContent = '0';
   document.getElementById('gpa').textContent = '0';
   document.getElementById('cgpa').textContent = '0';
 }
 
+// Call the function when the page loads
 initializeValues();
+
+
+function updateCopyrightYear() {
+  const currentYear = new Date().getFullYear();
+  const copyrightElement = document.getElementById("copyright");
+  copyrightElement.innerHTML = "&copy; " + "Copyright " + currentYear + ' Developed by <a href="mailto:hassanhauda@gmail.com">Hassan Umar and Ahmad Lateef</a>. All rights reserved. ';
+}
+
+// Call the function to update the year when the page loads
+updateCopyrightYear();
+
 
 function startRotateIcon() {
   const resetIcon = document.getElementById("resetIcon");
@@ -248,12 +265,5 @@ function startRotateIcon() {
   }, 20);
 }
 
+// Call the startRotateIcon function to initiate the rotation
 startRotateIcon();
-
-function updateCopyrightYear() {
-  const currentYear = new Date().getFullYear();
-  const copyrightElement = document.getElementById("copyright");
-  copyrightElement.innerHTML = "&copy; " + "Copyright " + currentYear + ' Developed by <a href="mailto:hassanhauda@gmail.com">Hassan Umar</a>. All rights reserved. ';
-}
-
-updateCopyrightYear();
