@@ -253,7 +253,7 @@ startRotateIcon();
 function updateCopyrightYear() {
   const currentYear = new Date().getFullYear();
   const copyrightElement = document.getElementById("copyright");
-  copyrightElement.innerHTML = "&copy; " + "Copyright " + currentYear + ' Developed by <a href="mailto:hassanhauda@gmail.com">Hassan Umar and Ahmad Lateef</a>. All rights reserved. ';
+  copyrightElement.innerHTML = "&copy; " + "Copyright " + currentYear + ' Developed by <a href="mailto:hassanhauda@gmail.com">Hassan Umar</a>. All rights reserved. ';
 }
 
 updateCopyrightYear();
