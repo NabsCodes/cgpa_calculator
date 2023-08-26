@@ -9,7 +9,6 @@ A simple and user-friendly CGPA (Cumulative Grade Point Average) calculator web 
 3. [Installation](#installation)
 4. [Usage](#usage)
 5. [Contributing](#contributing)
-6. [License](#license)
 
 ## Features
 
@@ -50,7 +49,3 @@ python manage.py runserver
 ## Contributing
 
 Contributions are welcome! Please feel free to submit pull requests or report issues.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
