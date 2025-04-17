@@ -4,12 +4,9 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   GraduationCap,
-  BookOpen,
   Award,
   Calculator,
   Target,
-  ChevronRight,
-  Sparkles,
   BarChart3,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
