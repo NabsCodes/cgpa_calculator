@@ -9,7 +9,7 @@
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   background-color: #343a40;
 }
 
@@ -18,7 +18,8 @@ h1 {
   color: #343a40;
 }
 
-.scale, .standing {
+.scale,
+.standing {
   font-size: 1.2rem;
   font-weight: bold;
   color: #343a40;
@@ -66,7 +67,8 @@ select:focus:hover {
   border-color: #406487;
 }
 
-#addRowBtn, #resetBtn {
+#addRowBtn,
+#resetBtn {
   display: block;
   width: 150px;
   margin: 16px auto;
@@ -112,8 +114,8 @@ select:focus:hover {
   justify-content: center;
   align-items: center;
   margin: 0 auto;
-  }
-  
+}
+
 .progress-bar {
   height: 100%;
   width: 0;
@@ -146,23 +148,23 @@ select:focus:hover {
   text-align: center;
   font-weight: bold;
   margin-top: 5px;
-  }
-  
-  .presidents-list {
+}
+
+.presidents-list {
   background-color: #00b300;
-  }
-  
-  .deans-list {
+}
+
+.deans-list {
   background-color: #33a1cc;
-  }
-  
-  .good-standing {
+}
+
+.good-standing {
   background-color: #ffcc66;
-  }
-  
-  .not-good-standing {
+}
+
+.not-good-standing {
   background-color: #ff4d4d;
-  }
+}
 
 footer {
   padding: 20px 0;
@@ -179,16 +181,20 @@ footer a:hover {
   text-decoration: underline;
 }
 
-input[type="number"], input[type="text"], select {
+input[type="number"],
+input[type="text"],
+select {
   width: 100%;
   padding: 5px;
   box-sizing: border-box;
 }
 
-input[type="number"]:focus, input[type="text"]:focus, select:focus {
+input[type="number"]:focus,
+input[type="text"]:focus,
+select:focus {
   outline: none;
-  border-color: #DC143C;
-  border: 1px solid ;
+  border-color: #dc143c;
+  border: 1px solid;
 }
 
 .deleteRowBtn {
@@ -276,7 +282,8 @@ i.fa-sync-alt {
     margin-bottom: 20px;
   }
 
-  .table th, .table td {
+  .table th,
+  .table td {
     padding: 12px;
   }
 
