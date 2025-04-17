@@ -8,12 +8,19 @@ A comprehensive CGPA (Cumulative Grade Point Average) calculator web application
 ## Table of Contents
 
 1. [Features](#features)
+<<<<<<< HEAD
 2. [Versions](#versions)
 3. [Requirements](#requirements)
 4. [Installation](#installation)
 5. [Usage](#usage)
 6. [Contributing](#contributing)
 7. [License](#license)
+=======
+2. [Requirements](#requirements)
+3. [Installation](#installation)
+4. [Usage](#usage)
+5. [Contributing](#contributing)
+>>>>>>> refs/remotes/origin/main
 
 ## Features
 
@@ -116,7 +123,3 @@ pnpm run dev
 ## Contributing
 
 Contributions are welcome! Please feel free to submit pull requests or report issues.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
