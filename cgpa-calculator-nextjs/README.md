@@ -44,8 +44,6 @@ A modern, sophisticated CGPA (Cumulative Grade Point Average) calculator built w
 
 ```bash
 pnpm install
-# or
-yarn install
 ```
 
 3. Start the development server:
@@ -82,7 +80,3 @@ This application can be easily deployed to Vercel:
 - Inspired by the original Django version of the CGPA Calculator
 - UI/UX redesigned for improved user experience and modern aesthetics
 - Built with best practices for React and NextJS applications
-
-## License
-
-[MIT](LICENSE)
