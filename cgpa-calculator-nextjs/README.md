@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CGPA Calculator (NextJS Version)
+
+A modern, sophisticated CGPA (Cumulative Grade Point Average) calculator built with NextJS, React, TypeScript, and TailwindCSS.
+
+## Screenshots
+
+### CGPA Calculator
+
+![CGPA Calculator Screenshot](public/cgpa-calculator.png)
+
+### GPA Goal Planner
+
+![GPA Goal Planner Screenshot](public/gpa-goal-planner.png)
+
+## Features
+
+- **Modern UI/UX**: Clean, professional interface with smooth animations and transitions
+- **Dual Functionality**:
+  - CGPA Calculator for tracking current academic performance
+  - GPA Goal Planner for mapping path to academic targets
+- **Client-side Processing**: Lightning-fast calculations without server roundtrips
+- **Dark/Light Mode**: Automatic theme detection with manual toggle option
+- **Responsive Design**: Optimized for all devices from mobile to desktop
+- **Accessibility**: Keyboard navigation support and screen reader compatibility
+- **Export Functionality**: Save your data as CSV for record keeping
+- **Academic Honors Guide**: Reference for common academic distinction requirements
+
+## Tech Stack
+
+- **Framework**: [Next.js 14](https://nextjs.org/) with App Router
+- **UI Libraries**:
+  - [TailwindCSS](https://tailwindcss.com/) for styling
+  - [Shadcn/ui](https://ui.shadcn.com/) for UI components
+  - [React Icons](https://react-icons.github.io/react-icons/) for iconography
+  - [Framer Motion](https://www.framer.com/motion/) for animations
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Forms & Validation**: React Hook Form with Zod
+- **State Management**: React Context API with localStorage persistence
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies:
 
 ```bash
-npm run dev
+pnpm install
 # or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+yarn install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Start the development server:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## Learn More
+## Usage
 
-To learn more about Next.js, take a look at the following resources:
+### CGPA Calculator
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Input your current CGPA and credits earned (optional)
+- Add courses with their credit hours and grades
+- View your calculated CGPA in real-time
+- Track your progress toward honors distinctions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### GPA Goal Planner
 
-## Deploy on Vercel
+- Set your current CGPA, credits earned, and target GPA
+- The planner will calculate the required GPA for upcoming courses
+- Adjust parameters to see different scenarios
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This application can be easily deployed to Vercel:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FNabsCodes%2Fcgpa_calculator%2Ftree%2Fmain%2Fcgpa-calculator-nextjs)
+
+## Acknowledgements
+
+- Inspired by the original Django version of the CGPA Calculator
+- UI/UX redesigned for improved user experience and modern aesthetics
+- Built with best practices for React and NextJS applications
+
+## License
+
+[MIT](LICENSE)
