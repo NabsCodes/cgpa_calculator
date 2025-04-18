@@ -41,23 +41,6 @@ export default function RootLayout({
           {children}
           <Analytics />
         </ThemeProvider>
-        <Script
-          id="structured-data"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebApplication",
-              name: "CGPA Calculator",
-              description: "Free online CGPA calculator and GPA goal planner.",
-              applicationCategory: "EducationalApplication",
-              author: {
-                "@type": "Person",
-                name: "NabsCodes",
-              },
-            }),
-          }}
-        />
       </body>
     </html>
   );
