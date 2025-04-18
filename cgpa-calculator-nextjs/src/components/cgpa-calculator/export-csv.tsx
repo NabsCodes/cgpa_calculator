@@ -485,9 +485,148 @@ const ExportCSV: React.FC<ExportCSVProps> = ({
                   </Button>
                 </div>
                 <div className="relative">
-                  <pre className="max-h-[30vh] overflow-auto rounded-md border bg-slate-50 p-2 text-xs dark:bg-slate-900 sm:p-4">
-                    {csvPreview || "Click on Preview to see your data"}
-                  </pre>
+                  {csvPreview ? (
+                    <div className="max-h-[35vh] overflow-auto rounded-md border bg-white shadow-sm dark:bg-slate-900">
+                      {csvPreview.split("\n").map((line, index) => {
+                        // Skip empty lines
+                        if (!line.trim()) return null;
+
+                        const cells = line.split(",");
+
+                        // Determine row type for styling
+                        let rowClass =
+                          "border-b border-slate-200 dark:border-slate-700";
+                        let cellClass = "px-3 py-2 text-xs";
+
+                        // Format title row
+                        if (index === 0) {
+                          return (
+                            <div
+                              key={index}
+                              className={`bg-slate-100 font-medium dark:bg-slate-800 ${rowClass}`}
+                            >
+                              <div
+                                className={`${cellClass} text-slate-700 dark:text-slate-300`}
+                              >
+                                {line}
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // Format date row
+                        if (index === 1) {
+                          return (
+                            <div
+                              key={index}
+                              className={`${rowClass} bg-slate-50 italic dark:bg-slate-800/50`}
+                            >
+                              <div
+                                className={`${cellClass} text-slate-500 dark:text-slate-400`}
+                              >
+                                {cells.join(" ")}
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // Format header row
+                        if (index === 3) {
+                          return (
+                            <div
+                              key={index}
+                              className={`${rowClass} bg-blue-50 dark:bg-blue-900/20`}
+                            >
+                              {cells.map((cell, cellIndex) => (
+                                <span
+                                  key={cellIndex}
+                                  className={`${cellClass} inline-block font-medium text-blue-700 dark:text-blue-300 w-1/${cells.length}`}
+                                >
+                                  {cell}
+                                </span>
+                              ))}
+                            </div>
+                          );
+                        }
+
+                        // Format course rows
+                        if (
+                          index > 3 &&
+                          !line.startsWith("Current CGPA") &&
+                          !line.startsWith("Credits Earned") &&
+                          !line.startsWith("Semester GPA") &&
+                          !line.startsWith("New CGPA") &&
+                          !line.startsWith("Total Credits") &&
+                          !line.startsWith("Academic Standing")
+                        ) {
+                          return (
+                            <div
+                              key={index}
+                              className={`${rowClass} hover:bg-slate-50 dark:hover:bg-slate-800/60`}
+                            >
+                              {cells.map((cell, cellIndex) => (
+                                <span
+                                  key={cellIndex}
+                                  className={`${cellClass} inline-block w-1/${cells.length}`}
+                                >
+                                  {cell}
+                                </span>
+                              ))}
+                            </div>
+                          );
+                        }
+
+                        // Format summary rows
+                        if (
+                          line.startsWith("Current CGPA") ||
+                          line.startsWith("Credits Earned") ||
+                          line.startsWith("Semester GPA") ||
+                          line.startsWith("New CGPA") ||
+                          line.startsWith("Total Credits") ||
+                          line.startsWith("Academic Standing")
+                        ) {
+                          return (
+                            <div
+                              key={index}
+                              className={`${rowClass} bg-slate-50 dark:bg-slate-800/50`}
+                            >
+                              <span
+                                className={`${cellClass} inline-block w-2/3 font-medium text-slate-700 dark:text-slate-300`}
+                              >
+                                {cells[0]}
+                              </span>
+                              <span
+                                className={`${cellClass} inline-block font-medium ${
+                                  line.includes("GPA") || line.includes("CGPA")
+                                    ? parseFloat(cells[1]) >= 3.5
+                                      ? "text-blue-600 dark:text-blue-400"
+                                      : parseFloat(cells[1]) >= 3.0
+                                        ? "text-cyan-600 dark:text-cyan-400"
+                                        : parseFloat(cells[1]) >= 2.0
+                                          ? "text-amber-600 dark:text-amber-400"
+                                          : "text-red-600 dark:text-red-400"
+                                    : "text-slate-700 dark:text-slate-300"
+                                } w-1/3`}
+                              >
+                                {cells[1]}
+                              </span>
+                            </div>
+                          );
+                        }
+
+                        // Default formatting for any other rows
+                        return (
+                          <div key={index} className={rowClass}>
+                            <div className={cellClass}>{line}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="flex h-32 items-center justify-center rounded-md border bg-slate-50 text-xs text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+                      Click on "Refresh" to see your data preview
+                    </div>
+                  )}
                 </div>
 
                 <div className="text-xs text-slate-500 dark:text-slate-400 sm:text-sm">

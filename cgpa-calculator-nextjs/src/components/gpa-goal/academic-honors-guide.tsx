@@ -16,11 +16,12 @@ const AcademicHonorsGuide: React.FC<AcademicHonorsGuideProps> = ({
 }) => {
   // Define honors data
   const honorsData = [
-    { name: "Cum Laude", range: "3.5 - 3.69", color: "bg-red-400" },
-    { name: "Magna Cum Laude", range: "3.7 - 3.89", color: "bg-amber-400" },
     { name: "Summa Cum Laude", range: "3.9 - 4.0", color: "bg-green-400" },
-    { name: "Dean's List", range: "3.5+", color: "bg-blue-400" },
+    { name: "Magna Cum Laude", range: "3.8 - 3.89", color: "bg-amber-400" },
+    { name: "Cum Laude", range: "3.7 - 3.79", color: "bg-yellow-400" },
+    { name: "University Honors", range: "3.5 - 3.69", color: "bg-red-400" },
     { name: "President's List", range: "3.8+", color: "bg-purple-400" },
+    { name: "Dean's List", range: "3.5+", color: "bg-blue-400" },
   ];
 
   return (
@@ -97,8 +98,8 @@ const AcademicHonorsGuide: React.FC<AcademicHonorsGuideProps> = ({
         <div className="mt-3 flex items-center gap-1.5 rounded-md bg-slate-100/70 p-2 text-xs dark:bg-slate-700/30">
           <Info className="h-3 w-3 flex-shrink-0 text-slate-500 dark:text-slate-400" />
           <p className="italic text-slate-500 dark:text-slate-400">
-            Requirements vary by institution. Check with your academic advisor
-            for specific details.
+            Honors shown are for American University of Nigeria (AUN).
+            Requirements may vary for other institutions.
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
 
+// Clearly defined interfaces for better type safety
 export interface AlternativePathResult {
   creditsNeeded: number;
   requiredGPA: number;
@@ -21,10 +22,28 @@ export interface CalculationResult {
   shouldShowAlternatives: boolean;
 }
 
+// Constants for academic honors classification
+const ACADEMIC_HONORS = {
+  SUMMA_CUM_LAUDE: { min: 3.9, label: "Summa Cum Laude" },
+  MAGNA_CUM_LAUDE: { min: 3.8, label: "Magna Cum Laude" },
+  CUM_LAUDE: { min: 3.7, label: "Cum Laude" },
+  UNIVERSITY_HONORS: { min: 3.5, label: "University Honors" },
+};
+
+// Constants for calculation settings
+const CALCULATION_SETTINGS = {
+  MAX_GPA: 4.0,
+  MIN_GPA: 0.0,
+  CREDIT_INCREMENT: 3,
+  MAX_ADDITIONAL_CREDITS: 42,
+  DEFAULT_CREDITS_PER_SEMESTER: 15,
+};
+
 export const useGPAGoal = (
   currentCGPA: number | string,
   creditsEarned: number | string,
 ) => {
+  // Single state object for related state
   const [state, setState] = useState<GPAGoalState>({
     goalGPA: "",
     creditsNeeded: "",
@@ -32,57 +51,70 @@ export const useGPAGoal = (
     alternativePaths: [],
     academicGoal: "",
   });
+
   const { toast } = useToast();
 
-  // Helper function to check if initial data exists
-  const hasInitialData = () => {
+  // Parse values once and reuse them
+  const parsedCurrentCGPA = useMemo(() => Number(currentCGPA), [currentCGPA]);
+  const parsedCreditsEarned = useMemo(
+    () => Number(creditsEarned),
+    [creditsEarned],
+  );
+  const parsedGoalGPA = useMemo(() => Number(state.goalGPA), [state.goalGPA]);
+  const parsedCreditsNeeded = useMemo(
+    () => Number(state.creditsNeeded),
+    [state.creditsNeeded],
+  );
+
+  // Type-safe state update function
+  const updateState = useCallback((updates: Partial<GPAGoalState>) => {
+    setState((prev) => ({ ...prev, ...updates }));
+  }, []);
+
+  // Check if initial CGPA and credits data exists
+  const hasInitialData = useCallback(() => {
     return (
       currentCGPA !== "" &&
       creditsEarned !== "" &&
-      !isNaN(parseFloat(currentCGPA.toString())) &&
-      !isNaN(parseFloat(creditsEarned.toString()))
+      !isNaN(parsedCurrentCGPA) &&
+      !isNaN(parsedCreditsEarned)
     );
-  };
+  }, [currentCGPA, creditsEarned, parsedCurrentCGPA, parsedCreditsEarned]);
 
-  // Update state in a type-safe manner
-  const updateState = (updates: Partial<GPAGoalState>) => {
-    setState((prev) => ({ ...prev, ...updates }));
-  };
-
-  // Set academic goal based on target CGPA
+  // Determine academic goal based on target GPA
   useEffect(() => {
-    const gpaValue = parseFloat(state.goalGPA);
-    if (!isNaN(gpaValue)) {
-      let goal = "";
-      if (gpaValue >= 3.9) {
-        goal = "Summa Cum Laude";
-      } else if (gpaValue >= 3.7) {
-        goal = "Magna Cum Laude";
-      } else if (gpaValue >= 3.5) {
-        goal = "Cum Laude";
-      } else if (gpaValue >= 3.0) {
-        goal = "Good Standing";
-      }
-      updateState({ academicGoal: goal });
-    } else {
+    if (isNaN(parsedGoalGPA)) {
       updateState({ academicGoal: "" });
+      return;
     }
-  }, [state.goalGPA]);
 
-  // Generate alternative paths when needed
+    let goal = "";
+    if (parsedGoalGPA >= ACADEMIC_HONORS.SUMMA_CUM_LAUDE.min) {
+      goal = ACADEMIC_HONORS.SUMMA_CUM_LAUDE.label;
+    } else if (parsedGoalGPA >= ACADEMIC_HONORS.MAGNA_CUM_LAUDE.min) {
+      goal = ACADEMIC_HONORS.MAGNA_CUM_LAUDE.label;
+    } else if (parsedGoalGPA >= ACADEMIC_HONORS.CUM_LAUDE.min) {
+      goal = ACADEMIC_HONORS.CUM_LAUDE.label;
+    } else if (parsedGoalGPA >= ACADEMIC_HONORS.UNIVERSITY_HONORS.min) {
+      goal = ACADEMIC_HONORS.UNIVERSITY_HONORS.label;
+    }
+
+    updateState({ academicGoal: goal });
+  }, [parsedGoalGPA, updateState]);
+
+  // Generate alternative paths when the needed GPA is too high
   useEffect(() => {
-    if (state.neededGPA !== null && state.neededGPA > 4.0) {
+    if (
+      state.neededGPA !== null &&
+      state.neededGPA > CALCULATION_SETTINGS.MAX_GPA
+    ) {
       generateAlternativePaths();
     }
   }, [state.neededGPA]);
 
-  // Calculate the required GPA to achieve goal
-  const calculateGoalGPA = (): CalculationResult => {
-    const currentCGPAValue = parseFloat(currentCGPA.toString());
-    const creditsEarnedValue = parseFloat(creditsEarned.toString());
-    const goalGPAValue = parseFloat(state.goalGPA);
-    const creditsNeededValue = parseFloat(state.creditsNeeded);
-
+  // Calculate required GPA
+  const calculateGoalGPA = useCallback((): CalculationResult => {
+    // Validate input data
     if (!hasInitialData()) {
       toast({
         title: "Missing information",
@@ -94,9 +126,9 @@ export const useGPAGoal = (
 
     if (
       !state.goalGPA ||
-      isNaN(goalGPAValue) ||
-      goalGPAValue < 0 ||
-      goalGPAValue > 4
+      isNaN(parsedGoalGPA) ||
+      parsedGoalGPA < CALCULATION_SETTINGS.MIN_GPA ||
+      parsedGoalGPA > CALCULATION_SETTINGS.MAX_GPA
     ) {
       toast({
         title: "Invalid target CGPA",
@@ -108,8 +140,8 @@ export const useGPAGoal = (
 
     if (
       !state.creditsNeeded ||
-      isNaN(creditsNeededValue) ||
-      creditsNeededValue <= 0
+      isNaN(parsedCreditsNeeded) ||
+      parsedCreditsNeeded <= 0
     ) {
       toast({
         title: "Invalid credits",
@@ -119,8 +151,8 @@ export const useGPAGoal = (
       return { success: false, shouldShowAlternatives: false };
     }
 
-    // Handle case where target is lower than current CGPA
-    if (goalGPAValue < currentCGPAValue) {
+    // Handle case where goal is already achieved
+    if (parsedGoalGPA < parsedCurrentCGPA) {
       toast({
         title: "Goal already achieved",
         description: "Your target CGPA is lower than your current CGPA.",
@@ -128,24 +160,24 @@ export const useGPAGoal = (
       return { success: true, shouldShowAlternatives: false };
     }
 
+    // Core calculation
     const totalNeededPoints =
-      goalGPAValue * (creditsEarnedValue + creditsNeededValue);
-    const currentPoints = currentCGPAValue * creditsEarnedValue;
+      parsedGoalGPA * (parsedCreditsEarned + parsedCreditsNeeded);
+    const currentPoints = parsedCurrentCGPA * parsedCreditsEarned;
     const neededPoints = totalNeededPoints - currentPoints;
-    const calculatedGPA = neededPoints / creditsNeededValue;
+    const calculatedGPA = neededPoints / parsedCreditsNeeded;
 
     updateState({ neededGPA: calculatedGPA });
 
-    if (calculatedGPA > 4.0) {
+    // Provide appropriate feedback based on the result
+    if (calculatedGPA > CALCULATION_SETTINGS.MAX_GPA) {
       toast({
         title: "Goal may not be achievable",
-        description: `You need a ${calculatedGPA.toFixed(
-          2,
-        )} GPA in your upcoming courses, which exceeds the 4.0 maximum.`,
+        description: `You need a ${calculatedGPA.toFixed(2)} GPA in your upcoming courses, which exceeds the 4.0 maximum.`,
         variant: "destructive",
       });
       return { success: true, shouldShowAlternatives: true };
-    } else if (calculatedGPA < 0) {
+    } else if (calculatedGPA < CALCULATION_SETTINGS.MIN_GPA) {
       toast({
         title: "Goal already achieved",
         description: "Your current CGPA is already higher than your target.",
@@ -154,45 +186,53 @@ export const useGPAGoal = (
     } else {
       toast({
         title: "Calculation complete",
-        description: `You need a ${calculatedGPA.toFixed(
-          2,
-        )} GPA in your upcoming courses.`,
+        description: `You need a ${calculatedGPA.toFixed(2)} GPA in your upcoming courses.`,
       });
       return { success: true, shouldShowAlternatives: false };
     }
-  };
+  }, [
+    hasInitialData,
+    parsedCurrentCGPA,
+    parsedCreditsEarned,
+    parsedGoalGPA,
+    parsedCreditsNeeded,
+    state.goalGPA,
+    state.creditsNeeded,
+    toast,
+    updateState,
+  ]);
 
-  // Generate alternative paths to achieve the goal
-  const generateAlternativePaths = () => {
-    const currentCGPAValue = parseFloat(currentCGPA.toString());
-    const creditsEarnedValue = parseFloat(creditsEarned.toString());
-    const goalGPAValue = parseFloat(state.goalGPA);
+  // Generate alternative paths to achieve goal
+  const generateAlternativePaths = useCallback(() => {
+    if (
+      !hasInitialData() ||
+      isNaN(parsedGoalGPA) ||
+      isNaN(parsedCreditsNeeded)
+    ) {
+      return;
+    }
+
+    const currentPoints = parsedCurrentCGPA * parsedCreditsEarned;
+    const baseCreditsNeeded = parsedCreditsNeeded;
+    const avgCreditsPerSemester = Math.min(
+      baseCreditsNeeded,
+      CALCULATION_SETTINGS.DEFAULT_CREDITS_PER_SEMESTER,
+    );
     const paths: AlternativePathResult[] = [];
-
-    // Current points earned
-    const currentPoints = currentCGPAValue * creditsEarnedValue;
-
-    // Calculate how many credits would be needed with a perfect 4.0 GPA
-    const baseCreditsNeeded = parseFloat(state.creditsNeeded);
-
-    // Average credits per semester (used to estimate time)
-    const avgCreditsPerSemester = Math.min(baseCreditsNeeded, 15);
 
     // Try different credit amounts
     for (
       let additionalCredits = 0;
-      additionalCredits <= 42;
-      additionalCredits += 3
+      additionalCredits <= CALCULATION_SETTINGS.MAX_ADDITIONAL_CREDITS;
+      additionalCredits += CALCULATION_SETTINGS.CREDIT_INCREMENT
     ) {
       const totalCreditsNeeded = baseCreditsNeeded + additionalCredits;
 
       // Calculate required GPA for this credit amount
       const totalPointsNeeded =
-        goalGPAValue * (creditsEarnedValue + totalCreditsNeeded);
+        parsedGoalGPA * (parsedCreditsEarned + totalCreditsNeeded);
       const additionalPointsNeeded = totalPointsNeeded - currentPoints;
       const requiredGPA = additionalPointsNeeded / totalCreditsNeeded;
-
-      // Estimate how many semesters this would take
       const semestersEstimate = Math.ceil(
         totalCreditsNeeded / avgCreditsPerSemester,
       );
@@ -200,18 +240,31 @@ export const useGPAGoal = (
       paths.push({
         creditsNeeded: totalCreditsNeeded,
         requiredGPA: requiredGPA,
-        isAchievable: requiredGPA <= 4.0,
+        isAchievable: requiredGPA <= CALCULATION_SETTINGS.MAX_GPA,
         semestersEstimate: semestersEstimate,
       });
 
-      // Stop once we find an achievable path or reach max credits to show
-      if (requiredGPA <= 4.0 || additionalCredits >= 42) break;
+      // Stop once we find an achievable path or reach max credits
+      if (
+        requiredGPA <= CALCULATION_SETTINGS.MAX_GPA ||
+        additionalCredits >= CALCULATION_SETTINGS.MAX_ADDITIONAL_CREDITS
+      ) {
+        break;
+      }
     }
 
     updateState({ alternativePaths: paths });
-  };
+  }, [
+    parsedCurrentCGPA,
+    parsedCreditsEarned,
+    parsedGoalGPA,
+    parsedCreditsNeeded,
+    hasInitialData,
+    updateState,
+  ]);
 
-  const resetCalculator = () => {
+  // Reset calculator state
+  const resetCalculator = useCallback(() => {
     setState({
       goalGPA: "",
       creditsNeeded: "",
@@ -219,12 +272,22 @@ export const useGPAGoal = (
       alternativePaths: [],
       academicGoal: "",
     });
-  };
+  }, []);
 
-  // Setters for form fields
-  const setGoalGPA = (value: string) => updateState({ goalGPA: value });
-  const setCreditsNeeded = (value: string) =>
-    updateState({ creditsNeeded: value });
+  // Field setters
+  const setGoalGPA = useCallback(
+    (value: string) => {
+      updateState({ goalGPA: value });
+    },
+    [updateState],
+  );
+
+  const setCreditsNeeded = useCallback(
+    (value: string) => {
+      updateState({ creditsNeeded: value });
+    },
+    [updateState],
+  );
 
   return {
     state,

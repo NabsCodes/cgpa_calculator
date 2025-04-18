@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { SiGithub } from "react-icons/si";
-import { HiMoon, HiSun, HiGlobeAlt, HiMail, HiArrowUp } from "react-icons/hi";
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
+import { HiMail, HiArrowUp } from "react-icons/hi";
+
 import {
   Tooltip,
   TooltipContent,
@@ -15,91 +14,83 @@ import {
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
-  const { theme, setTheme } = useTheme();
-  // Use state to prevent hydration mismatch
-  const [mounted, setMounted] = useState(false);
 
-  // Only show theme toggle after component has mounted to avoid hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   return (
-    <footer className="mt-12 border-t border-slate-200 dark:border-slate-800">
-      <div className="mx-auto max-w-6xl py-6">
-        <div className="flex flex-col items-center justify-between gap-4 px-4 sm:flex-row">
-          {/* Copyright and attribution */}
-          <div className="text-sm text-slate-500 dark:text-slate-400">
-            © {currentYear} Developed by{" "}
+    <footer className="relative z-10 mt-8 border-t border-slate-200 bg-white py-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
+      <div className="mx-auto max-w-6xl px-4 md:px-6">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
+          {/* Left side - copyright */}
+          <div className="text-center text-sm sm:text-left">
+            © {currentYear}{" "}
             <Link
               href="https://nabeelhassan.dev"
+              className="text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center font-medium text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
             >
-              Hassan Umar
-              <HiGlobeAlt className="ml-1.5 h-3.5 w-3.5" />
+              Hassan Umar Hassan
             </Link>
+            . All rights reserved.
           </div>
 
-          {/* Links section */}
-          <div className="flex items-center gap-6 text-sm">
-            <Link
-              href="https://github.com/NabsCodes/cgpa_calculator"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
-            >
-              <SiGithub className="mr-1.5 h-4 w-4" />
-              GitHub
-            </Link>
-            <Link
-              href="mailto:hassanhauda@gmail.com"
-              className="inline-flex items-center text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
-            >
-              <HiMail className="mr-1.5 h-4 w-4" />
-              Contact
-            </Link>
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="inline-flex cursor-pointer items-center text-slate-600 transition-colors hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400"
-            >
-              <HiArrowUp className="mr-1.5 h-4 w-4" />
-              Top
-            </button>
-
-            {/* Theme toggle */}
-            <TooltipProvider>
+          {/* Right side - links & theme toggle */}
+          <div className="flex flex-wrap items-center justify-center gap-4 py-2 sm:justify-end sm:py-0">
+            <TooltipProvider delayDuration={300}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={toggleTheme}
-                    className="h-8 w-8 rounded-md p-0"
+                  <Link
+                    href="https://github.com/NabsCodes/cgpa-calculator"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 p-2 text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 sm:h-8 sm:w-8"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="View source code on GitHub"
                   >
-                    {mounted && (
-                      <>
-                        {theme === "dark" ? (
-                          <HiSun className="h-4 w-4" />
-                        ) : (
-                          <HiMoon className="h-4 w-4" />
-                        )}
-                      </>
-                    )}
-                    <span className="sr-only">Toggle theme</span>
-                  </Button>
+                    <SiGithub className="h-4 w-4" />
+                  </Link>
                 </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    {theme === "dark"
-                      ? "Switch to light mode"
-                      : "Switch to dark mode"}
-                  </p>
+                <TooltipContent side="top">
+                  <p>View on GitHub</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href="mailto:hassanhauda@gmail.com"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 p-2 text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 sm:h-8 sm:w-8"
+                    aria-label="Contact via email"
+                  >
+                    <HiMail className="h-4 w-4" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Contact</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={scrollToTop}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 p-2 text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 sm:h-8 sm:w-8"
+                    aria-label="Scroll to top"
+                  >
+                    <HiArrowUp className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Top</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
