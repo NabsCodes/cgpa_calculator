@@ -185,7 +185,7 @@ const GPAGoalPlanner: React.FC<GPAGoalPlannerProps> = ({
         </CardContent>
       </Card>
 
-      {/* <GPAEducationalInfo /> */}
+      <GPAEducationalInfo />
     </div>
   );
 };

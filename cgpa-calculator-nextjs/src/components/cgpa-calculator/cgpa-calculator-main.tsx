@@ -39,6 +39,7 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({ onCGPAChange }) => {
 
   // Use our custom hook for all the calculator logic
   const {
+    // State
     currentCGPA,
     setCurrentCGPA,
     creditsEarned,
@@ -46,6 +47,8 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({ onCGPAChange }) => {
     courses,
     results,
     lastSaved,
+
+    // Actions
     addCourse,
     deleteCourse,
     updateCourse,

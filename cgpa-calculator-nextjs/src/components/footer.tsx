@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
           {/* Left side - copyright */}
           <div className="text-center text-sm sm:text-left">
-            © {currentYear}{" "}
+            © {currentYear} Developed by{" "}
             <Link
               href="https://nabeelhassan.dev"
               className="text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
