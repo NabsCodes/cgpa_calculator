@@ -130,11 +130,11 @@ const CourseCard = memo(
     return (
       <div
         ref={setCardRef}
-        className="rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800/60"
+        className={`overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800/60 ${!isExpanded ? "rounded-b-lg" : ""}`}
       >
         {/* Clickable card header */}
         <div
-          className="flex cursor-pointer items-center justify-between rounded-t-lg bg-slate-50 p-3 transition-colors hover:bg-slate-100 dark:bg-slate-800/90 dark:hover:bg-slate-700/70"
+          className="flex cursor-pointer items-center justify-between bg-slate-50 p-3 transition-colors hover:bg-slate-100 dark:bg-slate-800/90 dark:hover:bg-slate-700/70"
           onClick={() => toggleExpansion(course.id)}
           tabIndex={0}
           onKeyDown={handleCardKeyDown}
@@ -200,7 +200,7 @@ const CourseCard = memo(
               }}
               className="overflow-hidden border-t border-slate-200 dark:border-slate-700"
             >
-              <div className="space-y-2 p-3 pt-2">
+              <div className="space-y-2 bg-white p-3 pt-2 dark:bg-slate-800/60">
                 <div className="space-y-1">
                   <Label
                     htmlFor={`mobile-course-code-${course.id}`}
@@ -543,7 +543,7 @@ const CourseTable: React.FC<CourseTableProps> = ({
               variant="outline"
               size="sm"
               onClick={toggleAllCards}
-              className="h-8 text-xs font-medium"
+              className="h-8 rounded-md text-xs font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/70"
             >
               {allExpanded ? (
                 <>
