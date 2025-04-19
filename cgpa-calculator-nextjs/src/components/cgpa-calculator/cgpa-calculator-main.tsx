@@ -191,7 +191,7 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({ onCGPAChange }) => {
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3 dark:border-slate-800">
                   <div className="flex items-center gap-1">
                     <span className="text-xs text-slate-500 dark:text-slate-400">
-                      Template rows:
+                      Reset rows:
                     </span>
                     {[3, 4, 5, 6].map((count) => (
                       <Button
