@@ -203,19 +203,77 @@ const InstallPrompt = () => {
             Install CGPA Calculator
           </h3>
           {isIOS ? (
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Tap{" "}
-              <span className="inline-block">
-                <svg
-                  className="h-4 w-4"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
+            <div className="flex flex-col gap-2 text-xs text-gray-500 dark:text-gray-400">
+              <div>
+                To install, tap the <strong>Share</strong> button
+                <span className="mx-1 inline-block align-middle">
+                  {/* iOS share icon */}
+                  <svg
+                    className="inline-block h-4 w-4 text-gray-500 dark:text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 16V4M12 4l-4 4M12 4l4 4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <rect
+                      x="4"
+                      y="16"
+                      width="16"
+                      height="4"
+                      rx="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+                then select <strong>"Add to Home Screen"</strong>.
+              </div>
+              {/* Bonus: Show a share button if supported */}
+              {typeof window !== "undefined" && navigator.share ? (
+                <button
+                  className="mt-1 inline-flex items-center gap-1 rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600 focus:outline-none focus:ring"
+                  onClick={() => {
+                    navigator.share({
+                      title: document.title,
+                      url: window.location.href,
+                    });
+                  }}
                 >
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-                </svg>
-              </span>{" "}
-              and then "Add to Home Screen" to install
-            </p>
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <polyline
+                      points="16 6 12 2 8 6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <line
+                      x1="12"
+                      y1="2"
+                      x2="12"
+                      y2="15"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  Share
+                </button>
+              ) : null}
+            </div>
           ) : (
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
               Install this app on your device for easy access anytime
