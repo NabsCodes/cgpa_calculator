@@ -19,6 +19,8 @@ import { HiSun, HiMoon } from "react-icons/hi2";
 import Footer from "@/components/footer";
 import GPAGoalPlanner from "@/components/gpa-goal/gpa-goal-planner";
 import CGPACalculator from "@/components/cgpa-calculator/cgpa-calculator-main";
+import PWAStatus from "@/components/pwa-status";
+import InstallPrompt from "@/components/install-prompt";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<string>("cgpaCalculator");
@@ -29,8 +31,11 @@ export default function Home() {
     currentCGPA: "",
     creditsEarned: "",
   });
+
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const { toast } = useToast();
-  const [scrolled, setScrolled] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [_, setScrolled] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -230,6 +235,8 @@ export default function Home() {
       </div>
       <Footer />
       <Toaster />
+      <PWAStatus />
+      <InstallPrompt />
     </main>
   );
 }

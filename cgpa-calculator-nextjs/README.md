@@ -19,23 +19,24 @@ A modern, sophisticated CGPA (Cumulative Grade Point Average) calculator built w
   - CGPA Calculator for tracking current academic performance
   - GPA Goal Planner for mapping path to academic targets
 - **Client-side Processing**: Lightning-fast calculations without server roundtrips
+- **PWA Support**: Installable on mobile devices
+- **Offline Support**: Works even when disconnected from the internet
 - **Dark/Light Mode**: Automatic theme detection with manual toggle option
 - **Responsive Design**: Optimized for all devices from mobile to desktop
 - **Accessibility**: Keyboard navigation support and screen reader compatibility
 - **Export Functionality**: Save your data as CSV for record keeping
 - **Academic Honors Guide**: Reference for common academic distinction requirements
+- **LocalStorage Persistence**: Your data and preferences are saved in your browser
 
 ## Tech Stack
 
-- **Framework**: [Next.js 14](https://nextjs.org/) with App Router
+- **Framework**: [Next.js 15](https://nextjs.org/) with App Router
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **UI Libraries**:
   - [TailwindCSS](https://tailwindcss.com/) for styling
   - [Shadcn/ui](https://ui.shadcn.com/) for UI components
   - [React Icons](https://react-icons.github.io/react-icons/) for iconography
   - [Framer Motion](https://www.framer.com/motion/) for animations
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Forms & Validation**: React Hook Form with Zod
-- **State Management**: React Context API with localStorage persistence
 
 ## Getting Started
 

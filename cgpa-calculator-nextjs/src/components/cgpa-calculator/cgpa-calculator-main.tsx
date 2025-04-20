@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import {
   GraduationCap,
   RefreshCw,
@@ -23,19 +24,16 @@ import ResultsDisplay from "@/components/cgpa-calculator/results-display";
 import ProgressBar from "@/components/cgpa-calculator/progress-bar";
 import ExportCSV from "@/components/cgpa-calculator/export-csv";
 
+// Add props type for onCGPAChange
 interface CGPACalculatorProps {
   onCGPAChange?: (
-    cgpa: number | string,
-    creditsEarned: number | string,
+    currentCGPA: string | number,
+    creditsEarned: string | number,
   ) => void;
 }
 
 const CGPACalculator: React.FC<CGPACalculatorProps> = ({ onCGPAChange }) => {
   const { toast } = useToast();
-
-  // Store previous values to prevent unnecessary updates
-  const prevCGPARef = useRef<number | string>("");
-  const prevCreditsEarnedRef = useRef<number | string>("");
 
   // Use our custom hook for all the calculator logic
   const {
@@ -47,6 +45,8 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({ onCGPAChange }) => {
     courses,
     results,
     lastSaved,
+    mounted,
+    restoredFromStorage,
 
     // Actions
     addCourse,
@@ -54,7 +54,6 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({ onCGPAChange }) => {
     updateCourse,
     resetForm,
     setDefaultRowCount,
-    mounted,
   } = useCGPA();
 
   // Format the last saved time for display
@@ -76,36 +75,14 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({ onCGPAChange }) => {
     }
   };
 
-  // Notify parent component of CGPA changes, but only when they actually change
-  useEffect(() => {
-    if (onCGPAChange && mounted) {
-      // Only call onCGPAChange if values have actually changed
-      if (
-        prevCGPARef.current !== currentCGPA ||
-        prevCreditsEarnedRef.current !== creditsEarned
-      ) {
-        onCGPAChange(currentCGPA, creditsEarned);
-
-        // Update refs with current values
-        prevCGPARef.current = currentCGPA;
-        prevCreditsEarnedRef.current = creditsEarned;
-      }
-    }
-  }, [currentCGPA, creditsEarned, onCGPAChange, mounted]);
-
   // Effect to show notification for restored data (on first load)
   useEffect(() => {
-    if (mounted && typeof window !== "undefined") {
+    if (mounted && typeof window !== "undefined" && restoredFromStorage) {
       // Check if this is the first load in this session
       const hasNotifiedThisSession = sessionStorage.getItem("cgpaDataNotified");
 
-      // Only show the toast if it's the first load in this session AND there's actual previous data
-      if (
-        !hasNotifiedThisSession &&
-        (currentCGPA ||
-          creditsEarned ||
-          courses.some((c) => c.courseCode || c.creditHours || c.grade))
-      ) {
+      // Only show the toast if it's the first load in this session AND data was restored
+      if (!hasNotifiedThisSession) {
         toast({
           title: "Welcome back",
           description: "Your previous calculation data has been restored.",
@@ -115,7 +92,14 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({ onCGPAChange }) => {
         sessionStorage.setItem("cgpaDataNotified", "true");
       }
     }
-  }, [mounted, toast, currentCGPA, creditsEarned, courses]);
+  }, [mounted, toast, restoredFromStorage]);
+
+  // Call onCGPAChange when currentCGPA or creditsEarned change
+  useEffect(() => {
+    if (onCGPAChange) {
+      onCGPAChange(currentCGPA, creditsEarned);
+    }
+  }, [currentCGPA, creditsEarned, onCGPAChange]);
 
   // Handle template row count changes with visual feedback
   const handleRowCountChange = (count: number) => {

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client";
 
 import type React from "react";
@@ -14,8 +15,8 @@ import {
 interface CGPAFormProps {
   currentCGPA: number | string;
   creditsEarned: number | string;
-  setCurrentCGPA: (value: number | string) => void;
-  setCreditsEarned: (value: number | string) => void;
+  setCurrentCGPA: (cgpa: number | string) => void;
+  setCreditsEarned: (credits: number | string) => void;
   calculateCGPA: () => void;
 }
 
@@ -27,30 +28,30 @@ const CGPAForm: React.FC<CGPAFormProps> = ({
   calculateCGPA,
 }) => {
   const handleCGPAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const cgpaInput = e.target.value;
     // Allow empty string or valid CGPA values
-    if (value === "") {
+    if (cgpaInput === "") {
       setCurrentCGPA("");
       return;
     }
 
-    const numValue = parseFloat(value);
+    const numValue = parseFloat(cgpaInput);
     if (!isNaN(numValue) && numValue >= 0 && numValue <= 4) {
-      setCurrentCGPA(value);
+      setCurrentCGPA(cgpaInput);
     }
   };
 
   const handleCreditsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const creditsInput = e.target.value;
     // Allow empty string or valid credits values
-    if (value === "") {
+    if (creditsInput === "") {
       setCreditsEarned("");
       return;
     }
 
-    const numValue = parseInt(value);
+    const numValue = parseInt(creditsInput);
     if (!isNaN(numValue) && numValue >= 0) {
-      setCreditsEarned(value);
+      setCreditsEarned(creditsInput);
     }
   };
 

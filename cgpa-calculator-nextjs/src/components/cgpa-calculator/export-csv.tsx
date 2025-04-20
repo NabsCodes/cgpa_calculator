@@ -494,9 +494,9 @@ const ExportCSV: React.FC<ExportCSVProps> = ({
                         const cells = line.split(",");
 
                         // Determine row type for styling
-                        let rowClass =
+                        const rowClass =
                           "border-b border-slate-200 dark:border-slate-700";
-                        let cellClass = "px-3 py-2 text-xs";
+                        const cellClass = "px-3 py-2 text-xs";
 
                         // Format title row
                         if (index === 0) {

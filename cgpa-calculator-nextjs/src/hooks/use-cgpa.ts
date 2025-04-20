@@ -58,6 +58,7 @@ export function useCGPA() {
   });
   const [mounted, setMounted] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
+  const [restoredFromStorage, setRestoredFromStorage] = useState(false);
 
   // Create default course rows
   const getDefaultCourses = useCallback(
@@ -186,6 +187,7 @@ export function useCGPA() {
     setCreditsEarned("");
     setCourses(getDefaultCourses());
     setLastSaved(null);
+    setRestoredFromStorage(false);
   }, [getDefaultCourses]);
 
   // Set default row count
@@ -242,13 +244,27 @@ export function useCGPA() {
             : getDefaultCourses(),
         );
         setLastSaved(parsedData.lastUpdated);
+        // Only set restoredFromStorage to true if there's meaningful data
+        if (
+          (parsedData.currentCGPA && parsedData.currentCGPA !== "") ||
+          (parsedData.creditsEarned && parsedData.creditsEarned !== "") ||
+          (parsedData.courses &&
+            parsedData.courses.length > 0 &&
+            parsedData.courses.some(
+              (c) => c.courseCode || c.creditHours || c.grade,
+            ))
+        ) {
+          setRestoredFromStorage(true);
+        }
       } else {
         // Initialize with default courses if no saved data
         setCourses(getDefaultCourses());
+        setRestoredFromStorage(false);
       }
     } catch (error) {
       console.error("Error loading data:", error);
       setCourses(getDefaultCourses());
+      setRestoredFromStorage(false);
     }
 
     setMounted(true);
@@ -290,6 +306,7 @@ export function useCGPA() {
     results,
     lastSaved,
     mounted,
+    restoredFromStorage,
 
     // Actions
     addCourse,

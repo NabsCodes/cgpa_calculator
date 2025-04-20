@@ -110,6 +110,7 @@ export const useGPAGoal = (
     ) {
       generateAlternativePaths();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.neededGPA]);
 
   // Calculate required GPA
