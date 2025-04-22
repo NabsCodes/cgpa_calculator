@@ -3,7 +3,6 @@
 
 import React, { useEffect } from "react";
 import {
-  GraduationCap,
   RefreshCw,
   PlusCircle,
   BookOpen,
@@ -142,7 +141,7 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="rounded-full bg-blue-500/10 p-2 dark:bg-blue-500/20">
-                <GraduationCap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <Calculator className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
@@ -261,7 +260,7 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
                 />
 
                 {/* Progress Bar */}
-                <ProgressBar gpa={results.cgpa} />
+                <ProgressBar gpa={results.gpa} />
 
                 {/* Export Button */}
                 <div className="flex justify-end border-t border-slate-100 pt-3 dark:border-slate-800">

@@ -9,6 +9,7 @@ import {
   ChevronUp,
   Award,
   GraduationCap,
+  Goal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -117,7 +118,7 @@ const GoalInputForm: React.FC<GoalInputFormProps> = ({
           <CardContent className="flex h-full flex-col p-6">
             <div className="mb-6 flex items-center gap-3">
               <div className="rounded-full bg-blue-500/10 p-2 dark:bg-blue-500/20">
-                <Calculator className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <Goal className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <h3 className="font-semibold text-slate-800 dark:text-slate-200">

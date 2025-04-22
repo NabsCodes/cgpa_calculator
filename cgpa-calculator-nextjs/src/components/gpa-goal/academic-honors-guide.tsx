@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Award, Info, GraduationCap } from "lucide-react";
+import { Award, Info, GraduationCap, Calculator } from "lucide-react";
 
 interface AcademicHonorsGuideProps {
   currentCGPA?: number | string;
@@ -43,7 +43,7 @@ const AcademicHonorsGuide: React.FC<AcademicHonorsGuideProps> = ({
             <div className="flex flex-wrap gap-2">
               {currentCGPA !== undefined && (
                 <div className="inline-flex items-center rounded-lg border border-slate-200 bg-white/80 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-300">
-                  <GraduationCap className="mr-1.5 h-4 w-4 text-blue-500" />
+                  <Calculator className="mr-1.5 h-4 w-4 text-blue-500" />
                   Current CGPA:{" "}
                   <span className="ml-1 font-semibold">{currentCGPA}</span>
                 </div>

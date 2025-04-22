@@ -114,7 +114,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ gpa, className = "" }) => {
               mark === Math.floor(gpa) && `font-medium ${status.themeColor}`,
             )}
           >
-            <div className="mb-0.5 h-1 w-px bg-slate-300 dark:bg-slate-600 sm:mb-1"></div>
+            <div className="mb-0.5 h-1 w-[2px] bg-slate-300 dark:bg-slate-600 sm:mb-1"></div>
             <span>{mark}.0</span>
           </div>
         ))}
