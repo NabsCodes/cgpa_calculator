@@ -57,17 +57,17 @@ const GoalInputForm: React.FC<GoalInputFormProps> = ({
   return (
     <div className="space-y-4 lg:[&:first-child]:space-y-0">
       {/* Current Status Badges - Only visible on mobile */}
-      <div className="flex flex-wrap items-center gap-2 lg:hidden">
+      <div className="just flex w-full items-center justify-between gap-2 lg:hidden">
         <div className="inline-flex items-center rounded-lg border border-slate-200 bg-white/80 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-300">
           <GraduationCap className="mr-1.5 h-4 w-4 text-blue-500" />
-          Current CGPA:{" "}
+          <span className="hidden sm:inline">Current </span>CGPA:{" "}
           <span className="ml-1 font-semibold">{currentCGPA}</span>
         </div>
         <div className="inline-flex items-center rounded-lg border border-slate-200 bg-white/80 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-300">
           <span className="mr-1.5 flex h-4 w-4 items-center justify-center text-sm font-bold text-blue-500">
             Σ
           </span>
-          Credits Earned:{" "}
+          Credits<span className="hidden sm:inline"> Earned</span>:{" "}
           <span className="ml-1 font-semibold">{creditsEarned}</span>
         </div>
       </div>
@@ -145,7 +145,7 @@ const GoalInputForm: React.FC<GoalInputFormProps> = ({
                         <Info className="h-4 w-4 text-slate-400" />
                       </TooltipTrigger>
                       <TooltipContent side="top">
-                        <p className="max-w-xs">
+                        <p className="max-w-xs text-center">
                           The final CGPA you want to achieve
                         </p>
                       </TooltipContent>
@@ -190,7 +190,7 @@ const GoalInputForm: React.FC<GoalInputFormProps> = ({
                         <Info className="h-4 w-4 text-slate-400" />
                       </TooltipTrigger>
                       <TooltipContent side="top">
-                        <p className="max-w-xs">
+                        <p className="max-w-xs text-center">
                           How many credit hours you plan to take in your
                           upcoming semester
                         </p>

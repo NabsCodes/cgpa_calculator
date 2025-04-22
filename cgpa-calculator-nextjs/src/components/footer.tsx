@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="relative z-10 mt-8 border-t border-slate-200 bg-white py-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
+    <footer className="relative z-10 border-t border-slate-200 bg-white py-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-400">
       <div className="mx-auto max-w-6xl px-4 md:px-6">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
           {/* Left side - copyright */}

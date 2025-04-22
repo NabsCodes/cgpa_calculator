@@ -358,6 +358,20 @@ const CourseTable: React.FC<CourseTableProps> = ({
     }
   }, [courseIds, expandedCards, allExpanded]);
 
+  // Automatically update the allExpanded state based on the current card states
+  useEffect(() => {
+    if (courses.length > 1) {
+      const allCardsExpanded = courseIds.every((id) => expandedCards[id]);
+      const allCardsCollapsed = courseIds.every((id) => !expandedCards[id]);
+
+      if (allCardsExpanded && !allExpanded) {
+        setAllExpanded(true);
+      } else if (allCardsCollapsed && allExpanded) {
+        setAllExpanded(false);
+      }
+    }
+  }, [expandedCards, courseIds, courses.length, allExpanded]);
+
   // Toggle expansion state for a single card (memoized)
   const toggleCardExpansion = useCallback((id: number) => {
     setExpandedCards((prev) => ({
@@ -371,7 +385,7 @@ const CourseTable: React.FC<CourseTableProps> = ({
     const newExpandedState = !allExpanded;
     setAllExpanded(newExpandedState);
 
-    // Update all individual cards
+    // Update all individual cards in a single state update for better performance
     setExpandedCards(
       courses.reduce(
         (acc, course) => ({ ...acc, [course.id]: newExpandedState }),
@@ -598,7 +612,7 @@ const CourseTable: React.FC<CourseTableProps> = ({
                         <InfoIcon className="h-3.5 w-3.5 cursor-help text-slate-400" />
                       </TooltipTrigger>
                       <TooltipContent side="top">
-                        <p className="max-w-xs">
+                        <p className="max-w-xs text-center">
                           Enter your course code (e.g., CSC101)
                         </p>
                       </TooltipContent>
@@ -615,7 +629,7 @@ const CourseTable: React.FC<CourseTableProps> = ({
                         <InfoIcon className="h-3.5 w-3.5 cursor-help text-slate-400" />
                       </TooltipTrigger>
                       <TooltipContent side="top">
-                        <p className="max-w-xs">
+                        <p className="max-w-xs text-center">
                           Select the credit hours for this course
                         </p>
                       </TooltipContent>
@@ -632,7 +646,7 @@ const CourseTable: React.FC<CourseTableProps> = ({
                         <InfoIcon className="h-3.5 w-3.5 cursor-help text-slate-400" />
                       </TooltipTrigger>
                       <TooltipContent side="top">
-                        <p className="max-w-xs">
+                        <p className="max-w-xs text-center">
                           Select the grade you received
                         </p>
                       </TooltipContent>

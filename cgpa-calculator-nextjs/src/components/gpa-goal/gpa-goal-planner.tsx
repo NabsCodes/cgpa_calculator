@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { AlertCircle, ArrowRight, Target } from "lucide-react";
+import { AlertCircle, ArrowRight, Target, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
 
 // Import custom hook
 import { useGPAGoal } from "@/hooks/use-gpa-goal";
@@ -28,6 +29,8 @@ const GPAGoalPlanner: React.FC<GPAGoalPlannerProps> = ({
   onSwitchCalculator,
 }) => {
   const [activeTab, setActiveTab] = useState<string>("calculator");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { toast } = useToast();
 
   // Use custom hook for GPA goal calculations
   const {
@@ -49,6 +52,26 @@ const GPAGoalPlanner: React.FC<GPAGoalPlannerProps> = ({
     const result = calculateGoalGPA();
     if (result?.success && result.shouldShowAlternatives) {
       setActiveTab("alternatives");
+      setShowSuccess(false);
+    } else if (result?.success && !result.shouldShowAlternatives) {
+      // If calculation is successful but alternatives aren't needed
+
+      // Clear any previous alternative paths if they exist
+      if (state.alternativePaths.length > 0) {
+        // Show a toast notification explaining why we're switching back
+        toast({
+          title: "Goal is achievable!",
+          description:
+            "Your target CGPA can be achieved with your current plan. Alternative paths are no longer needed.",
+        });
+      }
+
+      // Show success animation
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 2000);
+
+      // Switch back to calculator tab
+      setActiveTab("calculator");
     }
   };
 
@@ -141,16 +164,34 @@ const GPAGoalPlanner: React.FC<GPAGoalPlannerProps> = ({
             className="w-full"
           >
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="calculator">Goal Calculator</TabsTrigger>
+              <TabsTrigger value="calculator" className="relative">
+                Goal Calculator
+                {showSuccess && (
+                  <motion.div
+                    className="absolute right-1 top-1"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <CheckCircle
+                      className="h-4 w-4 text-green-500"
+                      key="check-circle"
+                    />
+                  </motion.div>
+                )}
+              </TabsTrigger>
               <TabsTrigger
                 value="alternatives"
-                disabled={state.alternativePaths.length === 0}
+                disabled={
+                  state.alternativePaths.length === 0 ||
+                  (state.neededGPA !== null && state.neededGPA <= 4.0)
+                }
               >
                 Path Options
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="calculator" className="space-y-4 pt-3">
+            <TabsContent value="calculator" className="space-y-6 pt-3">
               <GoalInputForm
                 currentCGPA={currentCGPA}
                 creditsEarned={creditsEarned}

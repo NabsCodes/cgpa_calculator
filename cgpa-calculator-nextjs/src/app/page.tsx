@@ -7,20 +7,29 @@ import {
   Award,
   Calculator,
   Target,
-  BarChart3,
+  LightbulbIcon,
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { useTheme } from "next-themes";
-import { HiSun, HiMoon } from "react-icons/hi2";
+import { HiSun, HiMoon } from "react-icons/hi";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from "@/components/ui/dropdown-menu";
 
 // Import modular components
 import Footer from "@/components/footer";
 import GPAGoalPlanner from "@/components/gpa-goal/gpa-goal-planner";
 import CGPACalculator from "@/components/cgpa-calculator/cgpa-calculator-main";
+import WhatIfSimulator from "@/components/what-if-simulator/what-if-simulator";
 import PWAStatus from "@/components/pwa-status";
 import InstallPrompt from "@/components/install-prompt";
+import OnboardingDialog, { HelpButton } from "@/components/onboarding-dialog";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<string>("cgpaCalculator");
@@ -54,11 +63,6 @@ export default function Home() {
     setMounted(true);
   }, []);
 
-  // Handle theme toggle
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
-
   // Handler for tab changes
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -84,23 +88,13 @@ export default function Home() {
   };
 
   return (
-    <main className="relative min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900 dark:from-slate-950 dark:to-slate-900 dark:text-slate-100">
-      {/* Background decorative elements */}
-      <div
-        className="absolute inset-0 -z-10 overflow-hidden"
-        aria-hidden="true"
-      >
-        <div className="absolute -right-20 -top-40 h-80 w-80 rounded-full bg-blue-50/50 blur-3xl dark:bg-blue-950/30"></div>
-        <div className="absolute -left-20 top-1/3 h-60 w-60 rounded-full bg-indigo-50/50 blur-3xl dark:bg-indigo-950/30"></div>
-        <div className="absolute bottom-20 right-10 h-40 w-40 rounded-full bg-cyan-50/50 blur-3xl dark:bg-cyan-950/30"></div>
-      </div>
-
+    <>
       {/* Simple, elegant header without sticky behavior */}
       <motion.header
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="mx-auto flex max-w-6xl flex-col border-b border-slate-200 px-4 py-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between md:px-6"
+        className="mx-auto flex items-center justify-between border-b border-slate-200 px-4 py-4 dark:border-slate-800 md:px-6"
       >
         <div className="flex items-center">
           <GraduationCap
@@ -115,128 +109,204 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mt-3 flex items-center gap-2 sm:mt-0">
-          {mounted && (
-            <button
-              onClick={toggleTheme}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
-              aria-label={
-                theme === "dark"
-                  ? "Switch to light mode"
-                  : "Switch to dark mode"
-              }
-            >
-              {theme === "dark" ? (
-                <HiSun className="h-4 w-4" />
-              ) : (
-                <HiMoon className="h-4 w-4" />
-              )}
-            </button>
-          )}
+        <div className="flex items-center justify-end gap-2">
           <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 dark:bg-blue-900/20 dark:text-blue-300 dark:ring-blue-700/30">
             <Award className="mr-1 h-3 w-3" aria-hidden="true" />
             <span>4.0 Scale</span>
           </span>
-          <span className="inline-flex items-center rounded-md bg-slate-50 px-2 py-1 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-700/10 dark:bg-slate-800/30 dark:text-slate-300 dark:ring-slate-700/30">
-            <BarChart3 className="mr-1 h-3 w-3" aria-hidden="true" />
-            <span>GPA Tracker</span>
-          </span>
+          <HelpButton />
+          {mounted && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+                  aria-label="Theme selector"
+                >
+                  {theme === "system" && (
+                    <svg
+                      className="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 3v1m0 16v1m8.66-8.66l-.71.71M4.05 19.07l-.71.71m16.97-16.97l-.71.71M4.05 4.93l-.71-.71M21 12h1M3 12H2"
+                      />
+                    </svg>
+                  )}
+                  {theme === "light" && <HiSun className="h-4 w-4" />}
+                  {theme === "dark" && <HiMoon className="h-4 w-4" />}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+                  <DropdownMenuRadioItem value="system">
+                    <span className="flex items-center gap-2">
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 3v1m0 16v1m8.66-8.66l-.71.71M4.05 19.07l-.71.71m16.97-16.97l-.71.71M4.05 4.93l-.71-.71M21 12h1M3 12H2"
+                        />
+                      </svg>
+                      System
+                    </span>
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="light">
+                    <span className="flex items-center gap-2">
+                      <HiSun className="h-4 w-4" /> Light
+                    </span>
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="dark">
+                    <span className="flex items-center gap-2">
+                      <HiMoon className="h-4 w-4" /> Dark
+                    </span>
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </motion.header>
 
-      <div className="relative mx-auto max-w-6xl px-4 pt-6 md:px-6">
-        {/* Page content */}
-        <motion.section
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="relative z-10"
+      <main className="relative min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900 dark:from-slate-950 dark:to-slate-900 dark:text-slate-100">
+        {/* Background decorative elements */}
+        <div
+          className="absolute inset-0 -z-10 overflow-hidden"
+          aria-hidden="true"
         >
-          <div className="mx-auto mb-8 max-w-2xl text-center">
-            <p className="text-sm text-slate-600 dark:text-slate-400 md:text-base">
-              Track your academic progress with precision. Calculate your
-              current GPA, set goals, and plan your academic journey.
-            </p>
-          </div>
+          <div className="absolute -right-20 -top-40 h-80 w-80 rounded-full bg-blue-50/50 blur-3xl dark:bg-blue-950/30"></div>
+          <div className="absolute -left-20 top-1/3 h-60 w-60 rounded-full bg-indigo-50/50 blur-3xl dark:bg-indigo-950/30"></div>
+          <div className="absolute bottom-20 right-10 h-40 w-40 rounded-full bg-cyan-50/50 blur-3xl dark:bg-cyan-950/30"></div>
+        </div>
 
-          <Tabs
-            value={activeTab}
-            onValueChange={handleTabChange}
-            className="mb-8"
+        <div className="relative mx-auto max-w-6xl px-4 pt-6 md:px-6">
+          {/* Page content */}
+          <motion.section
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="relative z-10"
           >
-            <TabsList
-              className="mx-auto flex w-full max-w-md border-b border-slate-200 bg-transparent dark:border-slate-700"
-              role="tablist"
-              aria-label="CGPA Calculator Tabs"
+            <Tabs
+              value={activeTab}
+              onValueChange={handleTabChange}
+              className="pb-8"
             >
-              <TabsTrigger
-                value="cgpaCalculator"
-                className="flex-1 border-b-2 border-transparent bg-transparent px-3 py-2 text-sm data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:text-blue-600 dark:data-[state=active]:border-blue-500 dark:data-[state=active]:text-blue-400"
-                role="tab"
-                aria-selected={activeTab === "cgpaCalculator"}
-                aria-controls="cgpaCalculator-tab"
+              <TabsList
+                className="mx-auto flex w-full max-w-md border-b border-slate-200 bg-transparent dark:border-slate-700"
+                role="tablist"
+                aria-label="CGPA Calculator Tabs"
               >
-                <span className="flex items-center justify-center">
-                  <Calculator className="mr-1.5 h-4 w-4" aria-hidden="true" />
-                  <span className="font-medium sm:inline">Calculator</span>
-                </span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="gpaGoalPlanner"
-                className="flex-1 border-b-2 border-transparent bg-transparent px-3 py-2 text-sm data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:text-blue-600 dark:data-[state=active]:border-blue-500 dark:data-[state=active]:text-blue-400"
-                role="tab"
-                aria-selected={activeTab === "gpaGoalPlanner"}
-                aria-controls="gpaGoalPlanner-tab"
-              >
-                <span className="flex items-center justify-center">
-                  <Target className="mr-1.5 h-4 w-4" aria-hidden="true" />
-                  <span className="font-medium sm:inline">Goal Planner</span>
-                </span>
-              </TabsTrigger>
-            </TabsList>
-
-            <div className="mt-6">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTab}
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.25 }}
+                <TabsTrigger
+                  value="cgpaCalculator"
+                  className="flex-1 border-b-2 border-transparent bg-transparent px-3 py-2 text-sm data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:text-blue-600 dark:data-[state=active]:border-blue-500 dark:data-[state=active]:text-blue-400"
+                  role="tab"
+                  aria-selected={activeTab === "cgpaCalculator"}
+                  aria-controls="cgpaCalculator-tab"
                 >
-                  <TabsContent
-                    value="cgpaCalculator"
-                    className="mt-0"
-                    role="tabpanel"
-                    id="cgpaCalculator-tab"
-                    aria-labelledby="cgpaCalculator"
-                  >
-                    <CGPACalculator onCGPAChange={handleCGPAChange} />
-                  </TabsContent>
-
-                  <TabsContent
-                    value="gpaGoalPlanner"
-                    className="mt-0"
-                    role="tabpanel"
-                    id="gpaGoalPlanner-tab"
-                    aria-labelledby="gpaGoalPlanner"
-                  >
-                    <GPAGoalPlanner
-                      currentCGPA={cgpaState.currentCGPA}
-                      creditsEarned={cgpaState.creditsEarned}
-                      onSwitchCalculator={switchToCalculatorTab}
+                  <span className="flex items-center justify-center">
+                    <Calculator className="mr-1.5 h-4 w-4" aria-hidden="true" />
+                    <span className="font-medium sm:inline">Calculator</span>
+                  </span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="goalPlanner"
+                  className="flex-1 border-b-2 border-transparent bg-transparent px-3 py-2 text-sm data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:text-blue-600 dark:data-[state=active]:border-blue-500 dark:data-[state=active]:text-blue-400"
+                  role="tab"
+                  aria-selected={activeTab === "goalPlanner"}
+                  aria-controls="goalPlanner-tab"
+                >
+                  <span className="flex items-center justify-center">
+                    <Target className="mr-2 h-4 w-4" />
+                    Goal Planner
+                  </span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="whatIfSimulator"
+                  className="flex-1 border-b-2 border-transparent bg-transparent px-3 py-2 text-sm data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:text-blue-600 dark:data-[state=active]:border-blue-500 dark:data-[state=active]:text-blue-400"
+                  role="tab"
+                  aria-selected={activeTab === "whatIfSimulator"}
+                  aria-controls="whatIfSimulator-tab"
+                >
+                  <span className="flex items-center justify-center">
+                    <LightbulbIcon
+                      className="mr-1.5 h-4 w-4"
+                      aria-hidden="true"
                     />
-                  </TabsContent>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </Tabs>
-        </motion.section>
-      </div>
+                    <span className="font-medium sm:inline">What If</span>
+                  </span>
+                </TabsTrigger>
+              </TabsList>
+
+              <div className="mt-6">
+                <AnimatePresence mode="wait">
+                  {activeTab === "cgpaCalculator" && (
+                    <motion.div
+                      key="calculator"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <CGPACalculator
+                        onCGPAChange={handleCGPAChange}
+                        initialCGPA={cgpaState.currentCGPA}
+                        initialCredits={cgpaState.creditsEarned}
+                      />
+                    </motion.div>
+                  )}
+                  {activeTab === "goalPlanner" && (
+                    <motion.div
+                      key="goalPlanner"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <GPAGoalPlanner
+                        currentCGPA={cgpaState.currentCGPA}
+                        creditsEarned={cgpaState.creditsEarned}
+                        onSwitchCalculator={switchToCalculatorTab}
+                      />
+                    </motion.div>
+                  )}
+                  {activeTab === "whatIfSimulator" && (
+                    <motion.div
+                      key="whatIfSimulator"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <WhatIfSimulator
+                        currentCGPA={cgpaState.currentCGPA}
+                        creditsEarned={cgpaState.creditsEarned}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </Tabs>
+          </motion.section>
+        </div>
+        <Toaster />
+        <PWAStatus />
+        <InstallPrompt />
+        <OnboardingDialog />
+      </main>
       <Footer />
-      <Toaster />
-      <PWAStatus />
-      <InstallPrompt />
-    </main>
+    </>
   );
 }

@@ -30,9 +30,15 @@ interface CGPACalculatorProps {
     currentCGPA: string | number,
     creditsEarned: string | number,
   ) => void;
+  initialCGPA?: string | number;
+  initialCredits?: string | number;
 }
 
-const CGPACalculator: React.FC<CGPACalculatorProps> = ({ onCGPAChange }) => {
+const CGPACalculator: React.FC<CGPACalculatorProps> = ({
+  onCGPAChange,
+  initialCGPA,
+  initialCredits,
+}) => {
   const { toast } = useToast();
 
   // Use our custom hook for all the calculator logic
@@ -56,6 +62,16 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({ onCGPAChange }) => {
     setDefaultRowCount,
   } = useCGPA();
 
+  // Use initialCGPA and initialCredits when provided to prevent flashing
+  useEffect(() => {
+    if (mounted && initialCGPA !== undefined && initialCGPA !== "") {
+      setCurrentCGPA(initialCGPA);
+    }
+    if (mounted && initialCredits !== undefined && initialCredits !== "") {
+      setCreditsEarned(initialCredits);
+    }
+  }, [mounted, initialCGPA, initialCredits, setCurrentCGPA, setCreditsEarned]);
+
   // Format the last saved time for display
   const formatLastSaved = () => {
     if (!lastSaved) return null;
@@ -77,29 +93,38 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({ onCGPAChange }) => {
 
   // Effect to show notification for restored data (on first load)
   useEffect(() => {
-    if (mounted && typeof window !== "undefined" && restoredFromStorage) {
-      // Check if this is the first load in this session
-      const hasNotifiedThisSession = sessionStorage.getItem("cgpaDataNotified");
+    if (
+      mounted &&
+      typeof window !== "undefined" &&
+      restoredFromStorage &&
+      !sessionStorage.getItem(APP_CONFIG.SESSION_KEY) &&
+      (currentCGPA ||
+        creditsEarned ||
+        courses.some((c) => c.courseCode || c.creditHours || c.grade))
+    ) {
+      toast({
+        title: "Welcome back",
+        description: "Your previous calculation data has been restored.",
+      });
 
-      // Only show the toast if it's the first load in this session AND data was restored
-      if (!hasNotifiedThisSession) {
-        toast({
-          title: "Welcome back",
-          description: "Your previous calculation data has been restored.",
-        });
-
-        // Set flag in sessionStorage to prevent showing toast on refreshes
-        sessionStorage.setItem("cgpaDataNotified", "true");
-      }
+      // Set flag in sessionStorage to prevent showing toast on refreshes
+      sessionStorage.setItem(APP_CONFIG.SESSION_KEY, "true");
     }
-  }, [mounted, toast, restoredFromStorage]);
+  }, [
+    mounted,
+    toast,
+    restoredFromStorage,
+    currentCGPA,
+    creditsEarned,
+    courses,
+  ]);
 
   // Call onCGPAChange when currentCGPA or creditsEarned change
   useEffect(() => {
-    if (onCGPAChange) {
+    if (onCGPAChange && mounted) {
       onCGPAChange(currentCGPA, creditsEarned);
     }
-  }, [currentCGPA, creditsEarned, onCGPAChange]);
+  }, [currentCGPA, creditsEarned, onCGPAChange, mounted]);
 
   // Handle template row count changes with visual feedback
   const handleRowCountChange = (count: number) => {

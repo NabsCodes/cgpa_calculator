@@ -1,14 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Download,
-  X,
-  AlertCircle,
-  Mail,
-  Loader2,
-  ClipboardCopy,
-} from "lucide-react";
+import { Download, X, Mail, Loader2, ClipboardCopy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -66,15 +59,45 @@ const ExportCSV: React.FC<ExportCSVProps> = ({
 
   // Check if there is data to export
   const hasData = () => {
-    const hasCurrentCGPA =
-      currentCGPA !== "" && parseFloat(currentCGPA.toString()) > 0;
-    const hasCreditsEarned =
-      creditsEarned !== "" && parseFloat(creditsEarned.toString()) > 0;
+    // Check for valid current CGPA - needs special handling for string inputs
+    const hasCurrentCGPA = (() => {
+      if (
+        currentCGPA === "" ||
+        currentCGPA === undefined ||
+        currentCGPA === null
+      )
+        return false;
+      const cgpaValue = parseFloat(currentCGPA.toString());
+      return !isNaN(cgpaValue) && cgpaValue > 0;
+    })();
+
+    // Check for valid credits earned - needs special handling for string inputs
+    const hasCreditsEarned = (() => {
+      if (
+        creditsEarned === "" ||
+        creditsEarned === undefined ||
+        creditsEarned === null
+      )
+        return false;
+      const creditsValue = parseFloat(creditsEarned.toString());
+      return !isNaN(creditsValue) && creditsValue > 0;
+    })();
+
+    // Check for any valid course data
     const hasValidCourses = courses.some(
-      (course) => course.courseCode || course.creditHours || course.grade,
+      (course) =>
+        (course.courseCode && course.courseCode.trim() !== "") ||
+        (course.creditHours && parseFloat(course.creditHours.toString()) > 0) ||
+        (course.grade && course.grade.trim() !== ""),
     );
 
-    return hasCurrentCGPA || hasCreditsEarned || hasValidCourses;
+    // Also check if we have any calculated results
+    const hasResults =
+      results &&
+      (results.totalCredits > 0 || results.gpa > 0 || results.cgpa > 0);
+
+    // Return true if we have any meaningful data
+    return hasCurrentCGPA || hasCreditsEarned || hasValidCourses || hasResults;
   };
 
   // Get current academic standing based on GPA
@@ -320,7 +343,7 @@ const ExportCSV: React.FC<ExportCSVProps> = ({
           }}
           className="flex w-full flex-1 flex-col overflow-hidden"
         >
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid h-fit w-full grid-cols-3">
             <TabsTrigger value="options">Options</TabsTrigger>
             <TabsTrigger value="share">Share</TabsTrigger>
             <TabsTrigger value="preview">Preview</TabsTrigger>
@@ -329,7 +352,7 @@ const ExportCSV: React.FC<ExportCSVProps> = ({
           <div className="flex-1 overflow-auto">
             <TabsContent
               value="options"
-              className="h-full space-y-4 overflow-auto py-4"
+              className="h-full space-y-4 overflow-auto pb-2 pt-4"
             >
               <div className="grid grid-cols-1 items-center gap-2 sm:grid-cols-4 sm:gap-4">
                 <Label htmlFor="fileName" className="sm:text-right">
@@ -384,49 +407,6 @@ const ExportCSV: React.FC<ExportCSVProps> = ({
                   </div>
                 </div>
               </div>
-
-              {noMeaningfulData && (
-                <div className="rounded-md bg-yellow-50 p-3 dark:bg-yellow-900/20">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <AlertCircle
-                        className="h-5 w-5 text-yellow-400 dark:text-yellow-300"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm text-yellow-700 dark:text-yellow-200">
-                        No meaningful data to export. Add course information or
-                        CGPA data first.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {!noMeaningfulData &&
-                !includeEmptyCourses &&
-                courses.filter(
-                  (course) =>
-                    course.courseCode || course.creditHours || course.grade,
-                ).length === 0 && (
-                  <div className="rounded-md bg-blue-50 p-3 dark:bg-blue-900/20">
-                    <div className="flex">
-                      <div className="flex-shrink-0">
-                        <AlertCircle
-                          className="h-5 w-5 text-blue-400"
-                          aria-hidden="true"
-                        />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm text-blue-700 dark:text-blue-200">
-                          No course data available. Enable "Include empty
-                          courses" to export anyways.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
             </TabsContent>
 
             <TabsContent
@@ -638,7 +618,7 @@ const ExportCSV: React.FC<ExportCSVProps> = ({
           </div>
         </Tabs>
 
-        <DialogFooter className="flex flex-col-reverse items-center justify-between gap-2 border-t border-slate-200 pt-2 dark:border-slate-700 sm:flex-row sm:justify-between">
+        <DialogFooter className="flex flex-row items-center justify-between gap-2">
           <Button
             variant="outline"
             onClick={() => setOpen(false)}

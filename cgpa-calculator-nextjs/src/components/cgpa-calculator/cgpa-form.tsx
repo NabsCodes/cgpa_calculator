@@ -81,7 +81,7 @@ const CGPAForm: React.FC<CGPAFormProps> = ({
                 <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
               </TooltipTrigger>
               <TooltipContent>
-                <p className="max-w-xs">
+                <p className="max-w-xs text-center">
                   Enter your current Cumulative GPA (0.00 - 4.00)
                 </p>
               </TooltipContent>
@@ -121,7 +121,7 @@ const CGPAForm: React.FC<CGPAFormProps> = ({
                 <InfoIcon className="h-4 w-4 cursor-help text-slate-400" />
               </TooltipTrigger>
               <TooltipContent>
-                <p className="max-w-xs">
+                <p className="max-w-xs text-center">
                   Enter the total number of credit hours you've completed so far
                 </p>
               </TooltipContent>

@@ -204,36 +204,11 @@ const InstallPrompt = () => {
           </h3>
           {isIOS ? (
             <div className="flex flex-col gap-2 text-xs text-gray-500 dark:text-gray-400">
-              <div>
-                To install, tap the <strong>Share</strong> button
-                <span className="mx-1 inline-block align-middle">
-                  {/* iOS share icon */}
-                  <svg
-                    className="inline-block h-4 w-4 text-gray-500 dark:text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M12 16V4M12 4l-4 4M12 4l4 4"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <rect
-                      x="4"
-                      y="16"
-                      width="16"
-                      height="4"
-                      rx="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
-                then select <strong>"Add to Home Screen"</strong>.
-              </div>
-              {/* Bonus: Show a share button if supported */}
+              <p>
+                To install: Add this app to your home screen for easy access.
+                Look for "Add to Home Screen" in your browser menu.
+              </p>
+              {/* Simple share button if supported */}
               {typeof window !== "undefined" && navigator.share ? (
                 <button
                   className="mt-1 inline-flex items-center gap-1 rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-600 focus:outline-none focus:ring"
@@ -244,32 +219,6 @@ const InstallPrompt = () => {
                     });
                   }}
                 >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <polyline
-                      points="16 6 12 2 8 6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <line
-                      x1="12"
-                      y1="2"
-                      x2="12"
-                      y2="15"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
                   Share
                 </button>
               ) : null}
