@@ -102,10 +102,10 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
         creditsEarned ||
         courses.some((c) => c.courseCode || c.creditHours || c.grade))
     ) {
-      toast({
-        title: "Welcome back",
-        description: "Your previous calculation data has been restored.",
-      });
+      // toast({
+      //   title: "Welcome back",
+      //   description: "Your previous calculation data has been restored.",
+      // });
 
       // Set flag in sessionStorage to prevent showing toast on refreshes
       sessionStorage.setItem(APP_CONFIG.SESSION_KEY, "true");
