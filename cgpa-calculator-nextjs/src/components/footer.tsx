@@ -46,7 +46,7 @@ const Footer: React.FC = () => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Link
-                    href="https://github.com/NabsCodes/cgpa-calculator"
+                    href="https://github.com/NabsCodes/cgpa_calculator"
                     className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 p-2 text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 sm:h-8 sm:w-8"
                     target="_blank"
                     rel="noopener noreferrer"

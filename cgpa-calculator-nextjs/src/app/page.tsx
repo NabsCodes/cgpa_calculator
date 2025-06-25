@@ -41,9 +41,8 @@ export default function Home() {
     creditsEarned: "",
   });
 
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { toast } = useToast();
-  // eslint-disable-next-line no-unused-vars
   const [_, setScrolled] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
