@@ -26,6 +26,9 @@ export function useCGPA() {
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [restoredFromStorage, setRestoredFromStorage] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [defaultRowCount, setDefaultRowCountState] = useState(
+    APP_CONFIG.DEFAULT_ROWS,
+  );
 
   // Calculate CGPA effect
   useEffect(() => {
@@ -130,6 +133,7 @@ export function useCGPA() {
       setLastSaved(null);
       setRestoredFromStorage(false);
       setResults(DEFAULT_CGPA_RESULTS);
+      setDefaultRowCountState(APP_CONFIG.DEFAULT_ROWS); // Reset row count to default (3)
     }
 
     setIsResetting(false);
@@ -141,6 +145,7 @@ export function useCGPA() {
     if (count > 0 && count <= 20) {
       const newCourses = createDefaultCourses(count);
       setCourses(newCourses);
+      setDefaultRowCountState(count);
     }
   }, []);
 
@@ -156,6 +161,7 @@ export function useCGPA() {
     mounted,
     restoredFromStorage,
     isResetting,
+    defaultRowCount,
 
     // Actions
     addCourse,

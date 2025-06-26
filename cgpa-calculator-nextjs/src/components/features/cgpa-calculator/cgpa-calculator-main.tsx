@@ -24,6 +24,7 @@ import CourseTable from "./course-table";
 import ResultsDisplay from "./results-display";
 import ProgressBar from "./progress-bar";
 import ExportCSV from "./export-csv";
+import { Separator } from "@/components/ui/separator";
 
 // Add props type for onCGPAChange
 interface CGPACalculatorProps {
@@ -59,6 +60,7 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
     mounted,
     restoredFromStorage,
     isResetting,
+    defaultRowCount,
 
     // Actions
     addCourse,
@@ -198,25 +200,39 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
                 />
 
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3 dark:border-slate-800">
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs text-slate-500 dark:text-slate-400">
-                      Reset rows:
-                    </span>
-                    {[3, 4, 5, 6].map((count) => (
-                      <Button
-                        key={count}
-                        variant={
-                          APP_CONFIG.DEFAULT_ROWS === count
-                            ? "default"
-                            : "outline"
-                        }
-                        size="sm"
-                        onClick={() => handleRowCountChange(count)}
-                        className="h-7 w-7 p-0 text-xs"
-                      >
-                        {count}
-                      </Button>
-                    ))}
+                  <div className="hidden flex-wrap items-center gap-3 sm:flex">
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-slate-500 dark:text-slate-400">
+                        Templates:
+                      </span>
+                      {[3, 4, 5, 6].map((count) => (
+                        <Button
+                          key={count}
+                          variant={
+                            defaultRowCount === count &&
+                            courses.length === count
+                              ? "default"
+                              : "outline"
+                          }
+                          size="sm"
+                          onClick={() => handleRowCountChange(count)}
+                          className="h-7 w-7 p-0 text-xs"
+                          title={`Reset to ${count} rows`}
+                        >
+                          {count}
+                        </Button>
+                      ))}
+                    </div>
+                    <Separator orientation="vertical" className="h-5" />
+                    <div className="flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+                      <span className="text-xs text-slate-600 dark:text-slate-400">
+                        Current:
+                      </span>
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                        {courses.length}{" "}
+                        {courses.length === 1 ? "course" : "courses"}
+                      </span>
+                    </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button

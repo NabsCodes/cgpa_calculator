@@ -554,7 +554,15 @@ const CourseTable: React.FC<CourseTableProps> = ({
       {/* Mobile view - Collapsible Card layout */}
       <div className="space-y-4 sm:hidden">
         {courses.length > 1 && (
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+              <span className="text-xs text-slate-600 dark:text-slate-400">
+                Current:
+              </span>
+              <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                {courses.length} {courses.length === 1 ? "course" : "courses"}
+              </span>
+            </div>
             <Button
               variant="outline"
               size="sm"
@@ -573,6 +581,19 @@ const CourseTable: React.FC<CourseTableProps> = ({
                 </>
               )}
             </Button>
+          </div>
+        )}
+
+        {courses.length === 1 && (
+          <div className="flex justify-start">
+            <div className="flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+              <span className="text-xs text-slate-600 dark:text-slate-400">
+                Current:
+              </span>
+              <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                1 course
+              </span>
+            </div>
           </div>
         )}
 
