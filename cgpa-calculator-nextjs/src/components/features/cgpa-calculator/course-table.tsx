@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-unused-vars */
 "use client";
 
 import React, {
@@ -491,7 +489,13 @@ const CourseTable: React.FC<CourseTableProps> = ({
           >
             <SelectTrigger
               className="w-full"
-              onKeyDown={(e) => handleKeyDown(e as any, index, "creditHours")}
+              onKeyDown={(e) =>
+                handleKeyDown(
+                  e as React.KeyboardEvent<HTMLButtonElement>,
+                  index,
+                  "creditHours",
+                )
+              }
               aria-label={`Credit hours for row ${index + 1}`}
             >
               <SelectValue placeholder="Select" />
@@ -511,7 +515,13 @@ const CourseTable: React.FC<CourseTableProps> = ({
           >
             <SelectTrigger
               className="w-full"
-              onKeyDown={(e) => handleKeyDown(e as any, index, "grade")}
+              onKeyDown={(e) =>
+                handleKeyDown(
+                  e as React.KeyboardEvent<HTMLButtonElement>,
+                  index,
+                  "grade",
+                )
+              }
               aria-label={`Grade for row ${index + 1}`}
             >
               <SelectValue placeholder="Select" />
