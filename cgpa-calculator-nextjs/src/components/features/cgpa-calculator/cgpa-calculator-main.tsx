@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   RefreshCw,
   PlusCircle,
@@ -14,14 +13,17 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 // Import the hook that contains all the calculator logic
-import { useCGPA, APP_CONFIG } from "@/hooks/use-cgpa";
+import { useCGPA } from "@/hooks/use-cgpa";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { formatLastSaved } from "@/services/storage";
+import { APP_CONFIG } from "@/data/constants";
 
 // Import modular components
-import CGPAForm from "@/components/cgpa-calculator/cgpa-form";
-import CourseTable from "@/components/cgpa-calculator/course-table";
-import ResultsDisplay from "@/components/cgpa-calculator/results-display";
-import ProgressBar from "@/components/cgpa-calculator/progress-bar";
-import ExportCSV from "@/components/cgpa-calculator/export-csv";
+import CGPAForm from "./cgpa-form";
+import CourseTable from "./course-table";
+import ResultsDisplay from "./results-display";
+import ProgressBar from "./progress-bar";
+import ExportCSV from "./export-csv";
 
 // Add props type for onCGPAChange
 interface CGPACalculatorProps {
@@ -40,6 +42,10 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
 }) => {
   const { toast } = useToast();
 
+  // Refs for keyboard shortcuts
+  const currentCGPARef = useRef<HTMLInputElement>(null);
+  const creditsEarnedRef = useRef<HTMLInputElement>(null);
+
   // Use our custom hook for all the calculator logic
   const {
     // State
@@ -52,6 +58,7 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
     lastSaved,
     mounted,
     restoredFromStorage,
+    isResetting,
 
     // Actions
     addCourse,
@@ -60,6 +67,14 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
     resetForm,
     setDefaultRowCount,
   } = useCGPA();
+
+  // Setup keyboard shortcuts
+  useKeyboardShortcuts({
+    onAddCourse: addCourse,
+    onReset: resetForm,
+    onFocusCurrentCGPA: () => currentCGPARef.current?.focus(),
+    onFocusCreditsEarned: () => creditsEarnedRef.current?.focus(),
+  });
 
   // Use initialCGPA and initialCredits when provided to prevent flashing
   useEffect(() => {
@@ -71,24 +86,8 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
     }
   }, [mounted, initialCGPA, initialCredits, setCurrentCGPA, setCreditsEarned]);
 
-  // Format the last saved time for display
-  const formatLastSaved = () => {
-    if (!lastSaved) return null;
-
-    try {
-      const date = new Date(lastSaved);
-      return date.toLocaleString(undefined, {
-        month: "short",
-        day: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      });
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return null;
-    }
-  };
+  // Use the utility function for formatting last saved time
+  const formattedLastSaved = formatLastSaved(lastSaved);
 
   // Effect to show notification for restored data (on first load)
   useEffect(() => {
@@ -170,6 +169,8 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
                 creditsEarned={creditsEarned}
                 setCurrentCGPA={setCurrentCGPA}
                 setCreditsEarned={setCreditsEarned}
+                currentCGPARef={currentCGPARef}
+                creditsEarnedRef={creditsEarnedRef}
                 calculateCGPA={() => {}} // This is a no-op since calculation happens automatically through effects
               />
             </div>
@@ -232,9 +233,12 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
                       size="sm"
                       className="h-8 border-red-200 bg-red-50 text-red-600 hover:bg-red-100 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
                       onClick={resetForm}
+                      disabled={isResetting}
                     >
-                      <RefreshCw className="mr-1 h-3.5 w-3.5" />
-                      Reset
+                      <RefreshCw
+                        className={`mr-1 h-3.5 w-3.5 ${isResetting ? "animate-spin" : ""}`}
+                      />
+                      {isResetting ? "Resetting..." : "Reset"}
                     </Button>
                   </div>
                 </div>
@@ -256,7 +260,7 @@ const CGPACalculator: React.FC<CGPACalculatorProps> = ({
                   totalCredits={results.totalCredits}
                   gpa={results.gpa}
                   cgpa={results.cgpa}
-                  lastSaved={formatLastSaved()}
+                  lastSaved={formattedLastSaved}
                 />
 
                 {/* Progress Bar */}

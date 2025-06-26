@@ -12,10 +12,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useGPAGoal } from "@/hooks/use-gpa-goal";
 
 // Import modular components
-import GoalInputForm from "@/components/gpa-goal/goal-input-form";
-import GoalResultDisplay from "@/components/gpa-goal/goal-result-display";
-import AlternativePathsDisplay from "@/components/gpa-goal/alternative-paths-display";
-import GPAEducationalInfo from "@/components/gpa-goal/gpa-educational-info";
+import GoalInputForm from "./goal-input-form";
+import GoalResultDisplay from "./goal-result-display";
+import AlternativePathsDisplay from "./alternative-paths-display";
+import GPAEducationalInfo from "./gpa-educational-info";
 
 interface GPAGoalPlannerProps {
   currentCGPA: number | string;

@@ -1,6 +1,6 @@
 import type React from "react";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/shared/theme-provider";
 import { Analytics } from "@vercel/analytics/react";
 import { Outfit } from "next/font/google";
 import Script from "next/script";

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 "use client";
 
 import type React from "react";
@@ -11,14 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-interface CGPAFormProps {
-  currentCGPA: number | string;
-  creditsEarned: number | string;
-  setCurrentCGPA: (cgpa: number | string) => void;
-  setCreditsEarned: (credits: number | string) => void;
-  calculateCGPA: () => void;
-}
+import type { CGPAFormProps } from "@/types/cgpa";
 
 const CGPAForm: React.FC<CGPAFormProps> = ({
   currentCGPA,
@@ -26,6 +18,8 @@ const CGPAForm: React.FC<CGPAFormProps> = ({
   setCurrentCGPA,
   setCreditsEarned,
   calculateCGPA,
+  currentCGPARef,
+  creditsEarnedRef,
 }) => {
   const handleCGPAChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cgpaInput = e.target.value;
@@ -89,6 +83,7 @@ const CGPAForm: React.FC<CGPAFormProps> = ({
           </TooltipProvider>
         </div>
         <Input
+          ref={currentCGPARef}
           type="number"
           id="currentCGPA"
           value={currentCGPA}
@@ -129,6 +124,7 @@ const CGPAForm: React.FC<CGPAFormProps> = ({
           </TooltipProvider>
         </div>
         <Input
+          ref={creditsEarnedRef}
           type="number"
           id="creditsEarned"
           value={creditsEarned}

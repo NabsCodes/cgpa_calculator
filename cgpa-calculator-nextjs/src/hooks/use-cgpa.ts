@@ -1,172 +1,113 @@
 import { useState, useEffect, useCallback } from "react";
-
-// Type definitions for better code organization
-export interface Course {
-  id: number;
-  courseCode: string;
-  creditHours: string | number;
-  grade: string;
-}
-
-interface Results {
-  totalCredits: number;
-  gpa: number;
-  cgpa: number;
-}
-
-interface SavedData {
-  currentCGPA: number | string;
-  creditsEarned: number | string;
-  courses: Course[];
-  lastUpdated: string;
-}
-
-// Constants in one place
-export const APP_CONFIG = {
-  DEFAULT_ROWS: 3,
-  STORAGE_KEY: "cgpaCalculatorData",
-  SESSION_KEY: "cgpaDataNotified",
-  CONFIG_KEY: "cgpaCalculatorConfig",
-};
-
-// Grade points mapping for cleaner code
-const GRADE_POINTS: Record<string, number> = {
-  A: 4.0,
-  "A-": 3.7,
-  "B+": 3.3,
-  B: 3.0,
-  "B-": 2.7,
-  "C+": 2.3,
-  C: 2.0,
-  "C-": 1.7,
-  D: 1.0,
-  F: 0.0,
-  W: 0.0,
-  WP: 0.0,
-  WF: 0.0,
-};
+import { calculateCGPA } from "@/lib/calculations";
+import {
+  saveToLocalStorage,
+  loadFromLocalStorage,
+  clearStorageData,
+  shouldShowRestoredDataNotification,
+  markNotificationShown,
+} from "@/services/storage";
+import {
+  createDefaultCourses,
+  DEFAULT_CGPA_RESULTS,
+} from "@/data/default-values";
+import { APP_CONFIG } from "@/data/constants";
+import type { Course, CGPAResults } from "@/types/cgpa";
 
 export function useCGPA() {
   // State definitions
   const [currentCGPA, setCurrentCGPA] = useState<number | string>("");
   const [creditsEarned, setCreditsEarned] = useState<number | string>("");
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [results, setResults] = useState<Results>({
-    totalCredits: 0,
-    gpa: 0,
-    cgpa: 0,
-  });
+  const [courses, setCourses] = useState<Course[]>(() =>
+    createDefaultCourses(),
+  );
+  const [results, setResults] = useState<CGPAResults>(DEFAULT_CGPA_RESULTS);
   const [mounted, setMounted] = useState(false);
   const [lastSaved, setLastSaved] = useState<string | null>(null);
   const [restoredFromStorage, setRestoredFromStorage] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
-  // Create default course rows
-  const getDefaultCourses = useCallback(
-    (numRows = APP_CONFIG.DEFAULT_ROWS): Course[] => {
-      return Array.from({ length: numRows }, (_, index) => ({
-        id: index + 1,
-        courseCode: "",
-        creditHours: "",
-        grade: "",
-      }));
-    },
-    [],
-  );
+  // Calculate CGPA effect
+  useEffect(() => {
+    if (!mounted) return;
 
-  // Get grade points with simpler syntax
-  const getGradePoints = useCallback((grade: string): number => {
-    return GRADE_POINTS[grade] || 0;
-  }, []);
+    const newResults = calculateCGPA(courses, currentCGPA, creditsEarned);
+    setResults(newResults);
 
-  // Calculate CGPA based on current data
-  const calculateCGPA = useCallback(() => {
-    // Calculate current semester GPA
-    let totalGradePoints = 0;
-    let totalCreditHours = 0;
+    // Auto-save data (only save courses with data)
+    const coursesWithData = courses.filter(
+      (course) => course.courseCode || course.creditHours || course.grade,
+    );
 
-    courses.forEach((course) => {
-      if (course.creditHours && course.grade) {
-        const creditHours = Number(course.creditHours);
-        const gradePoints = getGradePoints(course.grade);
-
-        if (!isNaN(creditHours) && creditHours > 0) {
-          totalGradePoints += gradePoints * creditHours;
-          totalCreditHours += creditHours;
-        }
-      }
+    const saveResult = saveToLocalStorage({
+      currentCGPA,
+      creditsEarned,
+      courses: coursesWithData,
     });
 
-    // Initialize result values
-    let semesterGPA = 0;
-    let cgpa = 0;
+    if (saveResult.success) {
+      setLastSaved(new Date().toISOString());
+    }
+  }, [courses, currentCGPA, creditsEarned, mounted]);
 
-    // Calculate semester GPA if we have credits
-    if (totalCreditHours > 0) {
-      semesterGPA = totalGradePoints / totalCreditHours;
+  // Load saved data on mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
-      // Calculate CGPA if we have prior CGPA and credits
-      const currentCGPAValue = Number(currentCGPA);
-      const creditsEarnedValue = Number(creditsEarned);
+    const loadResult = loadFromLocalStorage();
 
-      if (
-        !isNaN(currentCGPAValue) &&
-        !isNaN(creditsEarnedValue) &&
-        currentCGPAValue > 0 &&
-        creditsEarnedValue > 0
-      ) {
-        // Weight the CGPA by credits
-        cgpa =
-          (currentCGPAValue * creditsEarnedValue + totalGradePoints) /
-          (creditsEarnedValue + totalCreditHours);
+    if (loadResult.success && loadResult.data) {
+      const savedData = loadResult.data;
 
-        // Cap CGPA at 4.0
-        cgpa = Math.min(cgpa, 4.0);
-      } else {
-        // If no prior CGPA, new GPA becomes CGPA
-        cgpa = semesterGPA;
+      setCurrentCGPA(savedData.currentCGPA || "");
+      setCreditsEarned(savedData.creditsEarned || "");
+
+      if (savedData.courses && savedData.courses.length > 0) {
+        const restoredCourses = [...savedData.courses];
+
+        // Ensure we have at least the default number of rows
+        while (restoredCourses.length < APP_CONFIG.DEFAULT_ROWS) {
+          restoredCourses.push({
+            id: Math.max(...restoredCourses.map((c) => c.id), 0) + 1,
+            courseCode: "",
+            creditHours: "",
+            grade: "",
+          });
+        }
+
+        setCourses(restoredCourses);
       }
-    } else if (currentCGPA) {
-      // If no new courses with grades, use existing CGPA
-      const currentCGPAValue = Number(currentCGPA);
-      if (!isNaN(currentCGPAValue) && currentCGPAValue > 0) {
-        cgpa = currentCGPAValue;
-      }
+
+      setLastSaved(savedData.lastUpdated || null);
+      setRestoredFromStorage(true);
     }
 
-    // Ensure values are not NaN
-    semesterGPA = isNaN(semesterGPA) ? 0 : semesterGPA;
-    cgpa = isNaN(cgpa) ? 0 : cgpa;
+    setMounted(true);
+  }, []);
 
-    setResults({
-      totalCredits: totalCreditHours,
-      gpa: semesterGPA,
-      cgpa: cgpa,
-    });
-  }, [courses, currentCGPA, creditsEarned, getGradePoints]);
-
-  // Add a new course row
+  // Course management functions
   const addCourse = useCallback(() => {
     const newId =
       courses.length > 0 ? Math.max(...courses.map((c) => c.id)) + 1 : 1;
-
-    setCourses((prevCourses) => [
-      ...prevCourses,
-      { id: newId, courseCode: "", creditHours: "", grade: "" },
+    setCourses((prev) => [
+      ...prev,
+      {
+        id: newId,
+        courseCode: "",
+        creditHours: "",
+        grade: "",
+      },
     ]);
   }, [courses]);
 
-  // Delete a course row
   const deleteCourse = useCallback((id: number) => {
-    setCourses((prevCourses) =>
-      prevCourses.filter((course) => course.id !== id),
-    );
+    setCourses((prev) => prev.filter((course) => course.id !== id));
   }, []);
 
-  // Update a course field
   const updateCourse = useCallback(
     (id: number, field: keyof Course, value: string | number) => {
-      setCourses((prevCourses) =>
-        prevCourses.map((course) =>
+      setCourses((prev) =>
+        prev.map((course) =>
           course.id === id ? { ...course, [field]: value } : course,
         ),
       );
@@ -174,127 +115,34 @@ export function useCGPA() {
     [],
   );
 
-  // Reset the form
-  const resetForm = useCallback(() => {
-    if (typeof window === "undefined") return;
+  const resetForm = useCallback(async () => {
+    setIsResetting(true);
 
-    // Clear localStorage and sessionStorage
-    localStorage.removeItem(APP_CONFIG.STORAGE_KEY);
-    sessionStorage.removeItem(APP_CONFIG.SESSION_KEY);
+    // Add a small delay to show the loading state
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-    // Reset all state values
-    setCurrentCGPA("");
-    setCreditsEarned("");
-    setCourses(getDefaultCourses());
-    setLastSaved(null);
-    setRestoredFromStorage(false);
-  }, [getDefaultCourses]);
+    const clearResult = clearStorageData();
 
-  // Set default row count
-  const setDefaultRowCount = useCallback(
-    (count: number) => {
-      if (typeof window === "undefined") return;
-
-      // Update in memory
-      APP_CONFIG.DEFAULT_ROWS = count;
-
-      // Update in localStorage
-      try {
-        const parsedConfig = JSON.parse(
-          localStorage.getItem(APP_CONFIG.CONFIG_KEY) || "{}",
-        );
-        parsedConfig.DEFAULT_ROWS = count;
-        localStorage.setItem(
-          APP_CONFIG.CONFIG_KEY,
-          JSON.stringify(parsedConfig),
-        );
-      } catch (error) {
-        console.error("Error saving default row count:", error);
-      }
-
-      // Reset the form with the new row count
-      resetForm();
-    },
-    [resetForm],
-  );
-
-  // Load data from localStorage on mount
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    try {
-      // Load configuration first
-      const savedConfig = localStorage.getItem(APP_CONFIG.CONFIG_KEY);
-      if (savedConfig) {
-        const parsedConfig = JSON.parse(savedConfig);
-        if (parsedConfig.DEFAULT_ROWS) {
-          APP_CONFIG.DEFAULT_ROWS = parsedConfig.DEFAULT_ROWS;
-        }
-      }
-
-      // Load saved calculation data
-      const savedData = localStorage.getItem(APP_CONFIG.STORAGE_KEY);
-      if (savedData) {
-        const parsedData: SavedData = JSON.parse(savedData);
-        setCurrentCGPA(parsedData.currentCGPA);
-        setCreditsEarned(parsedData.creditsEarned);
-        setCourses(
-          parsedData.courses.length > 0
-            ? parsedData.courses
-            : getDefaultCourses(),
-        );
-        setLastSaved(parsedData.lastUpdated);
-        // Only set restoredFromStorage to true if there's meaningful data
-        if (
-          (parsedData.currentCGPA && parsedData.currentCGPA !== "") ||
-          (parsedData.creditsEarned && parsedData.creditsEarned !== "") ||
-          (parsedData.courses &&
-            parsedData.courses.length > 0 &&
-            parsedData.courses.some(
-              (c) => c.courseCode || c.creditHours || c.grade,
-            ))
-        ) {
-          setRestoredFromStorage(true);
-        }
-      } else {
-        // Initialize with default courses if no saved data
-        setCourses(getDefaultCourses());
-        setRestoredFromStorage(false);
-      }
-    } catch (error) {
-      console.error("Error loading data:", error);
-      setCourses(getDefaultCourses());
+    if (clearResult.success) {
+      setCurrentCGPA("");
+      setCreditsEarned("");
+      setCourses(createDefaultCourses());
+      setLastSaved(null);
       setRestoredFromStorage(false);
+      setResults(DEFAULT_CGPA_RESULTS);
     }
 
-    setMounted(true);
-  }, [getDefaultCourses]);
+    setIsResetting(false);
+  }, []);
 
-  // Calculate CGPA whenever relevant state changes
-  useEffect(() => {
-    if (mounted) {
-      calculateCGPA();
+  const setDefaultRowCount = useCallback((count: number) => {
+    // Update default row count and save to user preferences
+    // This could be extended to save user preferences
+    if (count > 0 && count <= 20) {
+      const newCourses = createDefaultCourses(count);
+      setCourses(newCourses);
     }
-  }, [calculateCGPA, courses, currentCGPA, creditsEarned, mounted]);
-
-  // Save data to localStorage when relevant state changes
-  useEffect(() => {
-    if (!mounted || typeof window === "undefined") return;
-
-    const data: SavedData = {
-      currentCGPA,
-      creditsEarned,
-      courses,
-      lastUpdated: new Date().toISOString(),
-    };
-
-    try {
-      localStorage.setItem(APP_CONFIG.STORAGE_KEY, JSON.stringify(data));
-      setLastSaved(data.lastUpdated);
-    } catch (error) {
-      console.error("Error saving to localStorage:", error);
-    }
-  }, [courses, currentCGPA, creditsEarned, mounted]);
+  }, []);
 
   return {
     // State
@@ -307,6 +155,7 @@ export function useCGPA() {
     lastSaved,
     mounted,
     restoredFromStorage,
+    isResetting,
 
     // Actions
     addCourse,
@@ -314,5 +163,9 @@ export function useCGPA() {
     updateCourse,
     resetForm,
     setDefaultRowCount,
+
+    // Utilities
+    shouldShowNotification: shouldShowRestoredDataNotification,
+    markNotificationShown,
   };
 }

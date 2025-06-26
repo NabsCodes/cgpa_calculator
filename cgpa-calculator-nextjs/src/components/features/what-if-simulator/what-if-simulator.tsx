@@ -20,7 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import ScenarioSimulator from "@/components/what-if-simulator/scenario-simulator";
+import ScenarioSimulator from "./scenario-simulator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 

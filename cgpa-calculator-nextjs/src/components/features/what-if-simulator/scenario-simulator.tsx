@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 "use client";
 
 import React, { useState, useCallback, useMemo, useEffect } from "react";
@@ -37,7 +36,7 @@ import {
   Semester,
   SemesterCourse,
   GRADE_POINTS,
-} from "../../hooks/use-what-if-cgpa";
+} from "@/hooks/use-what-if-cgpa";
 
 interface ScenarioSimulatorProps {
   currentCGPA: number;
