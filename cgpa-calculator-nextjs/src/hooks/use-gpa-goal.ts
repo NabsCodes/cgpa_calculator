@@ -153,10 +153,16 @@ export const useGPAGoal = (
     }
 
     // Handle case where goal is already achieved
-    if (parsedGoalGPA < parsedCurrentCGPA) {
+    if (parsedGoalGPA <= parsedCurrentCGPA) {
+      // Clear previous results to avoid showing stale data
+      updateState({
+        neededGPA: 0,
+        alternativePaths: [],
+      });
       toast({
         title: "Goal already achieved",
-        description: "Your target CGPA is lower than your current CGPA.",
+        description:
+          "Your target CGPA is lower than or equal to your current CGPA.",
       });
       return { success: true, shouldShowAlternatives: false };
     }
@@ -179,12 +185,19 @@ export const useGPAGoal = (
       });
       return { success: true, shouldShowAlternatives: true };
     } else if (calculatedGPA < CALCULATION_SETTINGS.MIN_GPA) {
+      // This case shouldn't happen given the earlier check, but keep for safety
+      updateState({
+        neededGPA: 0,
+        alternativePaths: [],
+      });
       toast({
         title: "Goal already achieved",
         description: "Your current CGPA is already higher than your target.",
       });
       return { success: true, shouldShowAlternatives: false };
     } else {
+      // Clear alternative paths for achievable goals
+      updateState({ alternativePaths: [] });
       toast({
         title: "Calculation complete",
         description: `You need a ${calculatedGPA.toFixed(2)} GPA in your upcoming courses.`,
@@ -229,11 +242,22 @@ export const useGPAGoal = (
     ) {
       const totalCreditsNeeded = baseCreditsNeeded + additionalCredits;
 
+      // Guard against division by zero
+      if (totalCreditsNeeded <= 0) {
+        continue;
+      }
+
       // Calculate required GPA for this credit amount
       const totalPointsNeeded =
         parsedGoalGPA * (parsedCreditsEarned + totalCreditsNeeded);
       const additionalPointsNeeded = totalPointsNeeded - currentPoints;
       const requiredGPA = additionalPointsNeeded / totalCreditsNeeded;
+
+      // Guard against invalid calculations
+      if (!isFinite(requiredGPA)) {
+        continue;
+      }
+
       const semestersEstimate = Math.ceil(
         totalCreditsNeeded / avgCreditsPerSemester,
       );

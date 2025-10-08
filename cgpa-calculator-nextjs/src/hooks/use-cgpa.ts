@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { calculateCGPA } from "@/lib/calculations";
 import {
   saveToLocalStorage,
@@ -30,6 +30,9 @@ export function useCGPA() {
     APP_CONFIG.DEFAULT_ROWS,
   );
 
+  // Debounce timer ref for auto-save
+  const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   // Calculate CGPA effect
   useEffect(() => {
     if (!mounted) return;
@@ -37,20 +40,36 @@ export function useCGPA() {
     const newResults = calculateCGPA(courses, currentCGPA, creditsEarned);
     setResults(newResults);
 
-    // Auto-save data (only save courses with data)
+    // Debounced auto-save (only save courses with meaningful data)
+    // A course is meaningful if it has credit hours AND grade
     const coursesWithData = courses.filter(
-      (course) => course.courseCode || course.creditHours || course.grade,
+      (course) => course.creditHours && course.grade,
     );
 
-    const saveResult = saveToLocalStorage({
-      currentCGPA,
-      creditsEarned,
-      courses: coursesWithData,
-    });
-
-    if (saveResult.success) {
-      setLastSaved(new Date().toISOString());
+    // Clear previous timer
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
     }
+
+    // Set new timer for debounced save (500ms delay)
+    saveTimerRef.current = setTimeout(() => {
+      const saveResult = saveToLocalStorage({
+        currentCGPA,
+        creditsEarned,
+        courses: coursesWithData,
+      });
+
+      if (saveResult.success) {
+        setLastSaved(new Date().toISOString());
+      }
+    }, 500);
+
+    // Cleanup timer on unmount
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+    };
   }, [courses, currentCGPA, creditsEarned, mounted]);
 
   // Load saved data on mount

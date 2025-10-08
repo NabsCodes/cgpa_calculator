@@ -22,6 +22,52 @@ export function saveToLocalStorage(
   }
 }
 
+// Validate saved data structure
+function isValidSavedData(data: unknown): data is SavedData {
+  if (!data || typeof data !== "object") return false;
+
+  const d = data as Record<string, unknown>;
+
+  // Check required fields exist
+  if (!("currentCGPA" in d) || !("creditsEarned" in d) || !("courses" in d)) {
+    return false;
+  }
+
+  // Validate types
+  if (
+    typeof d.currentCGPA !== "number" &&
+    typeof d.currentCGPA !== "string"
+  ) {
+    return false;
+  }
+
+  if (
+    typeof d.creditsEarned !== "number" &&
+    typeof d.creditsEarned !== "string"
+  ) {
+    return false;
+  }
+
+  // Validate courses array
+  if (!Array.isArray(d.courses)) return false;
+
+  // Validate each course has required fields
+  for (const course of d.courses) {
+    if (!course || typeof course !== "object") return false;
+    const c = course as Record<string, unknown>;
+    if (
+      typeof c.id !== "number" ||
+      typeof c.courseCode !== "string" ||
+      (typeof c.creditHours !== "string" && typeof c.creditHours !== "number") ||
+      typeof c.grade !== "string"
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 // Load data from localStorage
 export function loadFromLocalStorage(): StorageResult<SavedData> {
   if (typeof window === "undefined") {
@@ -34,10 +80,25 @@ export function loadFromLocalStorage(): StorageResult<SavedData> {
       return { success: false, error: "No data found" };
     }
 
-    const parsedData = JSON.parse(data) as SavedData;
+    const parsedData = JSON.parse(data);
+
+    // Validate the parsed data structure
+    if (!isValidSavedData(parsedData)) {
+      console.error("Invalid data structure in localStorage");
+      // Clear corrupted data
+      localStorage.removeItem(APP_CONFIG.STORAGE_KEY);
+      return { success: false, error: "Invalid data structure" };
+    }
+
     return { success: true, data: parsedData };
   } catch (error) {
     console.error("Error loading from localStorage:", error);
+    // Clear corrupted data on parse error
+    try {
+      localStorage.removeItem(APP_CONFIG.STORAGE_KEY);
+    } catch (e) {
+      // Ignore cleanup errors
+    }
     return { success: false, error: "Failed to load data" };
   }
 }

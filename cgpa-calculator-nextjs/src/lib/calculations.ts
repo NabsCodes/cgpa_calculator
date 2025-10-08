@@ -1,4 +1,5 @@
 import { GRADE_POINTS } from "@/data/grades";
+import { GPA_CONFIG } from "@/data/constants";
 import type { Course, CGPAResults, GradeValue } from "@/types/cgpa";
 
 // Get grade points for a specific grade
@@ -35,6 +36,8 @@ export function calculateCGPA(
   // Calculate current semester data
   const semesterGPA = calculateSemesterGPA(courses);
 
+  // Count total credits consistently with GPA calculation
+  // Only count credits for courses that have both valid credit hours AND grades
   let totalCredits = 0;
   courses.forEach((course) => {
     const creditHours = Number(course.creditHours);
@@ -61,7 +64,7 @@ export function calculateCGPA(
     cgpa = Math.min(
       (currentCGPAValue * creditsEarnedValue + totalGradePoints) /
         (creditsEarnedValue + totalCredits),
-      4.0,
+      GPA_CONFIG.MAX_GPA,
     );
   } else if (currentCGPAValue > 0 && totalCredits === 0) {
     // If no new courses with grades, use existing CGPA
@@ -83,14 +86,24 @@ export function formatGPA(gpa: number): string {
 // Validate credit hours
 export function isValidCreditHours(creditHours: string | number): boolean {
   const credits = Number(creditHours);
-  return !isNaN(credits) && credits > 0 && credits <= 6;
+  // Check if it's a valid number, positive, <= 6, and is a whole number (no decimals)
+  return (
+    !isNaN(credits) &&
+    credits > 0 &&
+    credits <= 6 &&
+    Number.isInteger(credits)
+  );
 }
 
 // Validate CGPA value
 export function isValidCGPA(cgpa: string | number): boolean {
   if (cgpa === "" || cgpa === null || cgpa === undefined) return false;
   const gpaValue = Number(cgpa);
-  return !isNaN(gpaValue) && gpaValue >= 0 && gpaValue <= 4.0;
+  return (
+    !isNaN(gpaValue) &&
+    gpaValue >= GPA_CONFIG.MIN_GPA &&
+    gpaValue <= GPA_CONFIG.MAX_GPA
+  );
 }
 
 // Calculate what grade is needed to achieve target CGPA
@@ -107,5 +120,8 @@ export function calculateRequiredGrade(
   const currentGradePoints = currentCGPA * creditsEarned;
   const requiredNewGradePoints = requiredTotalGradePoints - currentGradePoints;
 
-  return Math.min(requiredNewGradePoints / plannedCredits, 4.0);
+  return Math.min(
+    requiredNewGradePoints / plannedCredits,
+    GPA_CONFIG.MAX_GPA,
+  );
 }
